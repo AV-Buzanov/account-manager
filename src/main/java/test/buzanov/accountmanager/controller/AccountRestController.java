@@ -1,0 +1,46 @@
+package test.buzanov.accountmanager.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import test.buzanov.accountmanager.dto.AccountDto;
+import test.buzanov.accountmanager.service.AccountService;
+
+import java.util.Collection;
+
+@RestController
+@RequestMapping(value = "/wallet")
+public class AccountRestController {
+
+    @Autowired
+    private AccountService accountService;
+
+    @GetMapping("/findAll")
+    public ResponseEntity<Collection<AccountDto>> findAll() {
+        return ResponseEntity.ok(accountService.findAll());
+    }
+
+    @GetMapping("/find/{id}")
+    public ResponseEntity<AccountDto> findOne(@PathVariable final String id) throws Exception {
+        return ResponseEntity.ok(accountService.findOne(id));
+    }
+
+    @PutMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<AccountDto> create(@RequestBody final AccountDto accountDto) throws Exception {
+        return ResponseEntity.ok(accountService
+                        .create(accountDto));
+    }
+
+    @PutMapping(value = "/update", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<AccountDto> update(@RequestBody final AccountDto accountDto) throws Exception {
+        return ResponseEntity.ok(accountService
+                        .update(accountDto));
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity delete(@PathVariable final String id) throws Exception {
+        accountService.delete(id);
+        return ResponseEntity.ok().build();
+    }
+}
