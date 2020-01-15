@@ -21,8 +21,8 @@ public class TransactionDtoConverter {
         if (transactionDto == null) return null;
         @NotNull final Transaction transaction = new Transaction();
         transaction.setId(transactionDto.getId());
-        if (transactionDto.getAccountId() != null)
-            transaction.setAccount(accountRepository.findById(transactionDto.getAccountId()).orElse(null));
+//        if (transactionDto.getAccountId() != null)
+//            transaction.setAccount(accountRepository.findById(transactionDto.getAccountId()).orElse(null));
         transaction.setSum(transactionDto.getSum());
         transaction.setDescription(transactionDto.getDescription());
         return transaction;

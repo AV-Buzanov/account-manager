@@ -44,6 +44,7 @@ public class AccountService {
         if (accountRepository.existsById(accountDto.getId()))
             throw new Exception("Account already exists");
         final Account account = accountDtoConverter.toAccountEntity(accountDto);
+        account.setCreation(new Date(System.currentTimeMillis()));
         return accountDtoConverter.toAccountDTO(accountRepository.saveAndFlush(account));
     }
 

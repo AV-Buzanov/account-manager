@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.UUID;
 
 
 @Getter
@@ -14,7 +15,7 @@ import java.util.Date;
 @ToString
 public class TransactionDto {
     @Nullable
-    private String id;
+    private String id = UUID.randomUUID().toString();
 
     @Nullable
     private String accountId;

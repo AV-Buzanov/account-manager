@@ -4,18 +4,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.annotation.ApplicationScope;
-import org.springframework.web.context.annotation.SessionScope;
 import test.buzanov.accountmanager.dto.TransactionDto;
 import test.buzanov.accountmanager.service.TransactionService;
 
 import java.util.Collection;
+import java.util.concurrent.locks.Lock;
 
 
 @RestController
 @RequestMapping(value = "/transaction")
 public class TransactionRestController {
-
     @Autowired
     private TransactionService transactionService;
 
@@ -31,8 +29,9 @@ public class TransactionRestController {
 
     @PutMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TransactionDto> create(@RequestBody final TransactionDto transactionDTO) throws Exception {
-        return ResponseEntity.ok(transactionService
+        ResponseEntity<TransactionDto> entity = ResponseEntity.ok(transactionService
                 .create(transactionDTO));
+        return entity;
     }
 
     @PutMapping(value = "/update", consumes = MediaType.APPLICATION_JSON_VALUE)

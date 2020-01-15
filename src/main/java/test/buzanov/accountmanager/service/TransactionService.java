@@ -3,15 +3,18 @@ package test.buzanov.accountmanager.service;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import test.buzanov.accountmanager.dto.TransactionDto;
 import test.buzanov.accountmanager.dto.converter.TransactionDtoConverter;
+import test.buzanov.accountmanager.entity.Account;
 import test.buzanov.accountmanager.entity.Transaction;
+import test.buzanov.accountmanager.repository.AccountRepository;
 import test.buzanov.accountmanager.repository.TransactionRepository;
 
 import java.util.Collection;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,6 +23,13 @@ public class TransactionService {
     @NotNull
     @Autowired
     private TransactionRepository transactionRepository;
+
+    @NotNull
+    @Autowired
+    private AccountRepository accountRepository;
+
+
+    private static volatile Lock lock = new ReentrantLock();
 
     @NotNull
     @Autowired
@@ -41,24 +51,15 @@ public class TransactionService {
     }
 
     @Nullable
-    @Transactional
-    public synchronized TransactionDto create(@Nullable final TransactionDto transactionDto) throws Exception {
-        if (transactionDto == null || transactionDto.getId() == null || transactionDto.getId().isEmpty()
-                || transactionDto.getAccountId() == null || transactionDto.getAccountId().isEmpty() ||
-                transactionDto.getSum() == 0)
-            throw new Exception("Argument can't be empty or null");
-        if (transactionRepository.existsById(transactionDto.getId()))
-            throw new Exception("Transaction id already exists");
-        Transaction transaction = transactionDtoConverter.toTransactionEntity(transactionDto);
-        if (transaction.getAccount() == null)
-            throw new Exception("Account not found");
-        if (transactionDto.getSum() < 0 &&
-                Math.abs(transactionDto.getSum()) > transaction.getAccount().getBalance())
-            throw new Exception("Insufficient funds in the account");
-        transaction.getAccount().sumBalance(transactionDto.getSum());
-        Thread.sleep(5000);
-        transaction = transactionRepository.saveAndFlush(transaction);
-        return transactionDtoConverter.toTransactionDTO(transaction);
+    public TransactionDto create(@Nullable final TransactionDto transactionDto) throws Exception {
+            if (transactionDto == null || transactionDto.getId() == null || transactionDto.getId().isEmpty()
+                    || transactionDto.getAccountId() == null || transactionDto.getAccountId().isEmpty() ||
+                    transactionDto.getSum() == 0)
+                throw new Exception("Argument can't be empty or null");
+            if (transactionRepository.existsById(transactionDto.getId()))
+                throw new Exception("Transaction id already exists");
+            withdraw(transactionDto);
+            return transactionDto;
     }
 
     @Nullable
@@ -75,5 +76,29 @@ public class TransactionService {
     public synchronized void delete(String id) throws Exception {
         if (id == null || id.isEmpty()) throw new Exception("Id can't by empty or null");
         transactionRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void withdraw(TransactionDto transactionDto) throws Exception {
+        while (!lock.tryLock()) {
+        }
+        try {
+            Transaction transaction = transactionDtoConverter.toTransactionEntity(transactionDto);
+            Account account = accountRepository.findById(transactionDto.getAccountId()).orElse(null);
+            if (account == null)
+                throw new Exception("Account not found");
+            if (transactionDto.getSum() < 0 &&
+                    Math.abs(transactionDto.getSum()) > account.getBalance())
+                throw new Exception("Insufficient funds in the account");
+            account.sumBalance(transactionDto.getSum());
+            transaction.setAccount(account);
+            accountRepository.saveAndFlush(account);
+
+            transaction = transactionRepository.saveAndFlush(transaction);
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            lock.unlock();
+        }
     }
 }

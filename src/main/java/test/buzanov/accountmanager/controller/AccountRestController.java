@@ -10,7 +10,7 @@ import test.buzanov.accountmanager.service.AccountService;
 import java.util.Collection;
 
 @RestController
-@RequestMapping(value = "/wallet")
+@RequestMapping(value = "/account")
 public class AccountRestController {
 
     @Autowired
