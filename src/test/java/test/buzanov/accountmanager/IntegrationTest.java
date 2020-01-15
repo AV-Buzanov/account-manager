@@ -34,7 +34,7 @@ public class IntegrationTest {
     @Before
     public void before() {
         final AccountDto accountDto = new AccountDto();
-        accountDto.setBalance(200);
+        accountDto.setBalance(2000);
         HttpEntity<AccountDto> entity = new HttpEntity<AccountDto>(accountDto);
         ResponseEntity<AccountDto> response = restTemplate.exchange("/api/account/create", HttpMethod.PUT, entity, AccountDto.class);
         accountId = response.getBody().getId();
@@ -49,7 +49,7 @@ public class IntegrationTest {
 
     @Test
     public void testing() {
-        ExecutorService executorService = Executors.newFixedThreadPool(21);
+        ExecutorService executorService = Executors.newFixedThreadPool(205);
         List<Future<String>> futures = new ArrayList<>();
         Callable<String> callable = new Callable<String>() {
             public String call() throws Exception {
@@ -61,9 +61,17 @@ public class IntegrationTest {
             }
         };
 
-        for (int i = 0; i < 25; i++) {
+        for (int i = 0; i < 205; i++) {
             futures.add(executorService.submit(callable));
         }
+
+        futures.forEach(s-> {
+            try {
+                System.out.println(s.get());
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        });
 
         boolean as = futures.stream().filter(s -> {
             try {

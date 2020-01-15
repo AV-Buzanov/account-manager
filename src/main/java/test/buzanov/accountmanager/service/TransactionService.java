@@ -4,6 +4,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import test.buzanov.accountmanager.dto.TransactionDto;
 import test.buzanov.accountmanager.dto.converter.TransactionDtoConverter;
@@ -13,6 +15,7 @@ import test.buzanov.accountmanager.repository.AccountRepository;
 import test.buzanov.accountmanager.repository.TransactionRepository;
 
 import java.util.Collection;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
@@ -29,7 +32,7 @@ public class TransactionService {
     private AccountRepository accountRepository;
 
 
-    private static volatile Lock lock = new ReentrantLock();
+    private Lock lock = new ReentrantLock();
 
     @NotNull
     @Autowired
@@ -52,14 +55,19 @@ public class TransactionService {
 
     @Nullable
     public TransactionDto create(@Nullable final TransactionDto transactionDto) throws Exception {
-            if (transactionDto == null || transactionDto.getId() == null || transactionDto.getId().isEmpty()
-                    || transactionDto.getAccountId() == null || transactionDto.getAccountId().isEmpty() ||
-                    transactionDto.getSum() == 0)
-                throw new Exception("Argument can't be empty or null");
-            if (transactionRepository.existsById(transactionDto.getId()))
-                throw new Exception("Transaction id already exists");
+        if (transactionDto == null || transactionDto.getId() == null || transactionDto.getId().isEmpty()
+                || transactionDto.getAccountId() == null || transactionDto.getAccountId().isEmpty() ||
+                transactionDto.getSum() == 0)
+            throw new Exception("Argument can't be empty or null");
+        if (transactionRepository.existsById(transactionDto.getId()))
+            throw new Exception("Transaction id already exists");
+        lock.tryLock(20000, TimeUnit.MILLISECONDS);
+        try {
             withdraw(transactionDto);
-            return transactionDto;
+        } finally {
+            lock.unlock();
+        }
+        return transactionDto;
     }
 
     @Nullable
@@ -80,25 +88,19 @@ public class TransactionService {
 
     @Transactional
     public void withdraw(TransactionDto transactionDto) throws Exception {
-        while (!lock.tryLock()) {
-        }
-        try {
-            Transaction transaction = transactionDtoConverter.toTransactionEntity(transactionDto);
-            Account account = accountRepository.findById(transactionDto.getAccountId()).orElse(null);
-            if (account == null)
-                throw new Exception("Account not found");
-            if (transactionDto.getSum() < 0 &&
-                    Math.abs(transactionDto.getSum()) > account.getBalance())
-                throw new Exception("Insufficient funds in the account");
-            account.sumBalance(transactionDto.getSum());
-            transaction.setAccount(account);
-            accountRepository.saveAndFlush(account);
+        Transaction transaction = transactionDtoConverter.toTransactionEntity(transactionDto);
+//        accountRepository.getOne(transactionDto.getAccountId());
+        Account account = accountRepository.findById(transactionDto.getAccountId()).orElse(null);
+        if (account == null)
+            throw new Exception("Account not found");
+        if (transactionDto.getSum() < 0 &&
+                Math.abs(transactionDto.getSum()) > account.getBalance())
+            throw new Exception("Insufficient funds in the account");
+        account.sumBalance(transactionDto.getSum());
 
-            transaction = transactionRepository.saveAndFlush(transaction);
-        } catch (Exception e) {
-            throw e;
-        } finally {
-            lock.unlock();
-        }
+        transaction.setAccount(account);
+//        accountRepository.saveAndFlush(account);
+        transaction = transactionRepository.saveAndFlush(transaction);
+//        accountRepository.sumAccountBalanceById(transactionDto.getAccountId(), transactionDto.getSum());
     }
 }
