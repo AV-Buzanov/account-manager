@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.assertj.AssertableApplicationContext;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -46,41 +47,41 @@ public class IntegrationTest {
         accountRepository.deleteById(accountId);
     }
 
-
     @Test
     public void testing() {
-        ExecutorService executorService = Executors.newFixedThreadPool(205);
-        List<Future<String>> futures = new ArrayList<>();
-        Callable<String> callable = new Callable<String>() {
-            public String call() throws Exception {
-                HttpEntity<TransactionDto> entity = new HttpEntity<TransactionDto>(new TransactionDto());
-                entity.getBody().setAccountId(accountId);
-                entity.getBody().setSum(-10);
-                ResponseEntity<TransactionDto> response = restTemplate.exchange("/api/transaction/create", HttpMethod.PUT, entity, TransactionDto.class);
-                return String.valueOf(response.getStatusCodeValue());
-            }
+        final ExecutorService executorService = Executors.newFixedThreadPool(205);
+        final List<Future<String>> futures = new ArrayList<>();
+        final Callable<String> callable = () -> {
+            final HttpEntity<TransactionDto> entity = new HttpEntity<TransactionDto>(new TransactionDto());
+            entity.getBody().setAccountId(accountId);
+            entity.getBody().setSum(-10);
+            final ResponseEntity<TransactionDto> response = restTemplate
+                    .exchange("/api/transaction/create", HttpMethod.PUT, entity, TransactionDto.class);
+            return String.valueOf(response.getStatusCodeValue());
         };
 
         for (int i = 0; i < 205; i++) {
             futures.add(executorService.submit(callable));
         }
 
-        futures.forEach(s-> {
-            try {
-                System.out.println(s.get());
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-            }
-        });
-
-        boolean as = futures.stream().filter(s -> {
+        long countOfErrorRequests = futures.stream().filter(s -> {
             try {
                 return "500".equals(s.get());
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
                 return false;
             }
-        }).count() == 5;
-        Assert.assertTrue("Fail", as);
+        }).count();
+
+        Assert.assertTrue("Count of error request expected:5, actual:" + countOfErrorRequests, countOfErrorRequests == 5);
+
+        final ResponseEntity<AccountDto> responseAccount = restTemplate
+                .exchange("/api/account/find/" + accountId, HttpMethod.GET, null, AccountDto.class);
+
+        Assert.assertNotNull("responseAccount body is null", responseAccount.getBody());
+
+        int accountBalance = responseAccount.getBody().getBalance();
+
+        Assert.assertTrue("Account balance expected:0, actual:" + accountBalance, accountBalance == 0);
     }
 }
