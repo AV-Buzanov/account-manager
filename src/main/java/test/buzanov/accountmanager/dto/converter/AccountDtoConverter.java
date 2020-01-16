@@ -10,10 +10,9 @@ import test.buzanov.accountmanager.entity.Account;
 public class AccountDtoConverter {
     @Nullable
     public Account toAccountEntity(@Nullable final AccountDto accountDto) {
-        if (accountDto == null) return null;
+        if (accountDto == null || accountDto.getId() == null) return null;
         @NotNull final Account account = new Account();
         account.setId(accountDto.getId());
-        account.setCreation(accountDto.getCreation());
         account.setBalance(accountDto.getBalance());
         return account;
     }

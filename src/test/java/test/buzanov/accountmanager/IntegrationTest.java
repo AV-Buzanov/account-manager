@@ -23,9 +23,9 @@ import java.util.concurrent.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class IntegrationTest {
-    private final static int NUMBER_OF_THREADS = 200;
+    private final static int NUMBER_OF_THREADS = 500;
 
-    private final static int NUMBER_OF_FAIL_THREADS = 5;
+    private final static int NUMBER_OF_FAIL_THREADS = 100;
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -51,7 +51,7 @@ public class IntegrationTest {
     }
 
     @Test
-    public void testing() {
+    public void testWithdrawOver() {
         final ExecutorService executorService = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
         final List<Future<String>> futures = new ArrayList<>();
         final Callable<String> callable = () -> {
@@ -76,15 +76,14 @@ public class IntegrationTest {
             }
         }).count();
 
-        Assert.assertTrue("Count of error request expected:5, actual:" + countOfErrorRequests, countOfErrorRequests == NUMBER_OF_FAIL_THREADS);
+        Assert.assertEquals("Count of error request incorrect: ", NUMBER_OF_FAIL_THREADS, countOfErrorRequests);
 
         final ResponseEntity<AccountDto> responseAccount = restTemplate
                 .exchange("/api/account/find/" + accountId, HttpMethod.GET, null, AccountDto.class);
-
         Assert.assertNotNull("responseAccount body is null", responseAccount.getBody());
 
         int accountBalance = responseAccount.getBody().getBalance();
 
-        Assert.assertTrue("Account balance expected:5, actual:" + accountBalance, accountBalance == 2);
+        Assert.assertEquals("Account balance incorrect: " + accountBalance, 2, accountBalance);
     }
 }

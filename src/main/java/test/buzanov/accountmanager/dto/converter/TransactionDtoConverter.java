@@ -4,9 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import test.buzanov.accountmanager.dto.AccountDto;
 import test.buzanov.accountmanager.dto.TransactionDto;
-import test.buzanov.accountmanager.entity.Account;
 import test.buzanov.accountmanager.entity.Transaction;
 import test.buzanov.accountmanager.repository.AccountRepository;
 
@@ -18,7 +16,7 @@ public class TransactionDtoConverter {
 
     @Nullable
     public Transaction toTransactionEntity(@Nullable final TransactionDto transactionDto) {
-        if (transactionDto == null) return null;
+        if (transactionDto == null || transactionDto.getId() == null) return null;
         @NotNull final Transaction transaction = new Transaction();
         transaction.setId(transactionDto.getId());
 //        if (transactionDto.getAccountId() != null)

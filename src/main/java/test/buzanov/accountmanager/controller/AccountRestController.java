@@ -23,23 +23,30 @@ public class AccountRestController {
 
     @GetMapping("/find/{id}")
     public ResponseEntity<AccountDto> findOne(@PathVariable final String id) throws Exception {
-        return ResponseEntity.ok(accountService.findOne(id));
+        final AccountDto accountDto = accountService.findOne(id);
+        if (accountDto == null)
+            return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(accountDto);
     }
 
     @PutMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AccountDto> create(@RequestBody final AccountDto accountDto) throws Exception {
-        return ResponseEntity.ok(accountService
-                        .create(accountDto));
+        final AccountDto createdAccountDto = accountService.create(accountDto);
+        if (createdAccountDto == null)
+            return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(createdAccountDto);
     }
 
     @PutMapping(value = "/update", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AccountDto> update(@RequestBody final AccountDto accountDto) throws Exception {
-        return ResponseEntity.ok(accountService
-                        .update(accountDto));
+        final AccountDto updatedAccountDto = accountService.update(accountDto);
+        if (updatedAccountDto == null)
+            return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(updatedAccountDto);
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity delete(@PathVariable final String id) throws Exception {
+    public ResponseEntity<String> delete(@PathVariable final String id) throws Exception {
         accountService.delete(id);
         return ResponseEntity.ok().build();
     }

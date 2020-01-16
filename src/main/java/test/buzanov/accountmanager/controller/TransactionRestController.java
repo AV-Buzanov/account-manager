@@ -25,24 +25,30 @@ public class TransactionRestController {
 
     @GetMapping("/find/{id}")
     public ResponseEntity<TransactionDto> findOne(@PathVariable final String id) throws Exception {
-        return ResponseEntity.ok(transactionService.findOne(id));
+        final TransactionDto transactionDto = transactionService.findOne(id);
+        if (transactionDto == null)
+            return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(transactionDto);
     }
 
     @PutMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TransactionDto> create(@RequestBody final TransactionDto transactionDTO) throws Exception {
-        ResponseEntity<TransactionDto> entity = ResponseEntity.ok(transactionService
-                .create(transactionDTO));
-        return entity;
+        final TransactionDto createdTransactionDto = transactionService.create(transactionDTO);
+        if (createdTransactionDto == null)
+            return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(createdTransactionDto);
     }
 
     @PutMapping(value = "/update", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TransactionDto> update(@RequestBody final TransactionDto transactionDTO) throws Exception {
-        return ResponseEntity.ok(transactionService
-                .update(transactionDTO));
+        final TransactionDto updatedTransactionDto = transactionService.update(transactionDTO);
+        if (updatedTransactionDto == null)
+            return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(updatedTransactionDto);
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity delete(@PathVariable final String id) throws Exception {
+    public ResponseEntity<String> delete(@PathVariable final String id) throws Exception {
         transactionService.delete(id);
         return ResponseEntity.ok().build();
     }

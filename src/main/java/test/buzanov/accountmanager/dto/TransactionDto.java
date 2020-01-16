@@ -1,10 +1,11 @@
 package test.buzanov.accountmanager.dto;
 
-import lombok.*;
-import org.jetbrains.annotations.NotNull;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.jetbrains.annotations.Nullable;
 
-import javax.persistence.*;
 import java.util.Date;
 import java.util.UUID;
 
