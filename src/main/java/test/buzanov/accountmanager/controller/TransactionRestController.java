@@ -1,5 +1,6 @@
 package test.buzanov.accountmanager.controller;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -8,17 +9,17 @@ import test.buzanov.accountmanager.dto.TransactionDto;
 import test.buzanov.accountmanager.service.TransactionService;
 
 import java.util.Collection;
-import java.util.concurrent.locks.Lock;
 
 
 @RestController
 @RequestMapping(value = "/transaction")
 public class TransactionRestController {
     @Autowired
+    @NotNull
     private TransactionService transactionService;
 
     @GetMapping("/findAll/{id}")
-    public ResponseEntity<Collection<TransactionDto>> findAll(@PathVariable final String id) {
+    public ResponseEntity<Collection<TransactionDto>> findAll(@PathVariable final String id) throws Exception {
         return ResponseEntity.ok(transactionService.findAllByAccount(id));
     }
 
