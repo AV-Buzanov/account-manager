@@ -7,7 +7,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.assertj.AssertableApplicationContext;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -24,6 +23,10 @@ import java.util.concurrent.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class IntegrationTest {
+    private final static int NUMBER_OF_THREADS = 200;
+
+    private final static int NUMBER_OF_FAIL_THREADS = 5;
+
     @Autowired
     private TestRestTemplate restTemplate;
 
@@ -35,7 +38,7 @@ public class IntegrationTest {
     @Before
     public void before() {
         final AccountDto accountDto = new AccountDto();
-        accountDto.setBalance(2000);
+        accountDto.setBalance((NUMBER_OF_THREADS - NUMBER_OF_FAIL_THREADS) * 10 + 2);
         HttpEntity<AccountDto> entity = new HttpEntity<AccountDto>(accountDto);
         ResponseEntity<AccountDto> response = restTemplate.exchange("/api/account/create", HttpMethod.PUT, entity, AccountDto.class);
         accountId = response.getBody().getId();
@@ -49,7 +52,7 @@ public class IntegrationTest {
 
     @Test
     public void testing() {
-        final ExecutorService executorService = Executors.newFixedThreadPool(205);
+        final ExecutorService executorService = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
         final List<Future<String>> futures = new ArrayList<>();
         final Callable<String> callable = () -> {
             final HttpEntity<TransactionDto> entity = new HttpEntity<TransactionDto>(new TransactionDto());
@@ -60,7 +63,7 @@ public class IntegrationTest {
             return String.valueOf(response.getStatusCodeValue());
         };
 
-        for (int i = 0; i < 205; i++) {
+        for (int i = 0; i < NUMBER_OF_THREADS; i++) {
             futures.add(executorService.submit(callable));
         }
 
@@ -73,7 +76,7 @@ public class IntegrationTest {
             }
         }).count();
 
-        Assert.assertTrue("Count of error request expected:5, actual:" + countOfErrorRequests, countOfErrorRequests == 5);
+        Assert.assertTrue("Count of error request expected:5, actual:" + countOfErrorRequests, countOfErrorRequests == NUMBER_OF_FAIL_THREADS);
 
         final ResponseEntity<AccountDto> responseAccount = restTemplate
                 .exchange("/api/account/find/" + accountId, HttpMethod.GET, null, AccountDto.class);
@@ -82,6 +85,6 @@ public class IntegrationTest {
 
         int accountBalance = responseAccount.getBody().getBalance();
 
-        Assert.assertTrue("Account balance expected:0, actual:" + accountBalance, accountBalance == 0);
+        Assert.assertTrue("Account balance expected:5, actual:" + accountBalance, accountBalance == 2);
     }
 }
