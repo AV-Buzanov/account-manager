@@ -18,8 +18,3 @@ java -jar
 * Maven 3.6.0 
 * Spring Boot 2.2.2.RELEASE
 
-## Создание счета
-
-* Java 1.8
-* Maven 3.6.0 
-* Spring Boot 2.2.2.RELEASE
