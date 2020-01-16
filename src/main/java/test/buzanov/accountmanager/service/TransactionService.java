@@ -113,7 +113,7 @@ public class TransactionService {
             throw new Exception("Account not found");
         if (transactionDto.getSum() != 0) {
             int withdrawSum = transactionDto.getSum() - transaction.getSum();
-            if (transactionDto.getSum() < 0 &&
+            if (withdrawSum < 0 &&
                     Math.abs(withdrawSum) > account.getBalance())
                 throw new Exception("Insufficient funds in the account");
             account.sumBalance(withdrawSum);
@@ -124,18 +124,30 @@ public class TransactionService {
         return transactionRepository.saveAndFlush(convertedNewTransaction);
     }
 
-    @Transactional
     public void delete(String id) throws Exception {
         if (id == null || id.isEmpty()) throw new Exception("Id can't by empty or null");
-        final Transaction transaction = transactionRepository.findById(id).orElse(null);
-        if (transaction == null)
-            throw new Exception("Transaction not found");
         lock.tryLock(40000, TimeUnit.MILLISECONDS);
         try {
-            transactionRepository.deleteById(id);
+            deleteTransaction(id);
         } finally {
             lock.unlock();
         }
     }
 
+    @Transactional
+    public void deleteTransaction(@NotNull final String id) throws Exception {
+        final Transaction transaction = transactionRepository.findById(id).orElse(null);
+        if (transaction == null)
+            throw new Exception("Transaction not found");
+        final Account account = transaction.getAccount();
+        if (account == null)
+            throw new Exception("Account not found");
+        int withdrawSum = -transaction.getSum();
+        if (withdrawSum < 0 &&
+                Math.abs(withdrawSum) > account.getBalance())
+            throw new Exception("Insufficient funds in the account");
+        account.sumBalance(withdrawSum);
+        accountRepository.saveAndFlush(account);
+        transactionRepository.deleteById(id);
+    }
 }

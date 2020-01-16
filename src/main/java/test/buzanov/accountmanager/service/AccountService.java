@@ -53,9 +53,12 @@ public class AccountService {
     public AccountDto update(@Nullable final AccountDto accountDto) throws Exception {
         if (accountDto == null || accountDto.getId() == null || accountDto.getId().isEmpty())
             throw new Exception("Argument can't be empty or null");
-        if (!accountRepository.existsById(accountDto.getId()))
+        final Account account = accountRepository.findById(accountDto.getId()).orElse(null);
+        if (account == null)
             throw new Exception("Account not found");
-        return accountDtoConverter.toAccountDTO(accountRepository.saveAndFlush(accountDtoConverter.toAccountEntity(accountDto)));
+        final Account convertedAccountForUpdate = accountDtoConverter.toAccountEntity(accountDto);
+        convertedAccountForUpdate.setBalance(account.getBalance());
+        return accountDtoConverter.toAccountDTO(accountRepository.saveAndFlush(convertedAccountForUpdate));
     }
 
     @Transactional
