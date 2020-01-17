@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 @Component
-public class AccountService {
+public class AccountService implements IAccountService {
 
     @NotNull
     private final AccountRepository accountRepository;

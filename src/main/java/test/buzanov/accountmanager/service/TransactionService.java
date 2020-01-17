@@ -20,7 +20,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 @Service
-public class TransactionService {
+public class TransactionService implements ITransactionService{
 
     private static final long LOCK_TIMEOUT = 40000;
 
@@ -73,7 +73,7 @@ public class TransactionService {
             throw new Exception("Id can't be empty or null");
         if (transactionDto.getAccountId() == null || transactionDto.getAccountId().isEmpty())
             throw new Exception("AccountId can't be empty or null");
-        if (transactionDto.getSum().compareTo(BigDecimal.valueOf(0)) <= 0)
+        if (transactionDto.getSum().compareTo(BigDecimal.ZERO) <= 0)
             throw new Exception("Sum can't be negative or 0");
         if (transactionRepository.existsById(transactionDto.getId()))
             throw new Exception("Transaction id already exists");
@@ -86,7 +86,7 @@ public class TransactionService {
     }
 
     @Transactional
-    public Transaction doTransaction(@NotNull final TransactionDto transactionDto) throws Exception {
+    protected Transaction doTransaction(@NotNull final TransactionDto transactionDto) throws Exception {
         final Transaction transaction = transactionDtoConverter.toTransactionEntity(transactionDto);
         if (transactionDto.getAccountId() == null || transaction == null)
             throw new Exception("Null");
@@ -103,42 +103,6 @@ public class TransactionService {
         return transactionRepository.saveAndFlush(transaction);
     }
 
-    @Nullable
-    public TransactionDto update(@Nullable final TransactionDto transactionDto) throws Exception {
-        if (transactionDto == null || transactionDto.getId() == null || transactionDto.getId().isEmpty())
-            throw new Exception("Id can't be empty or null");
-        if (transactionDto.getAccountId() == null || transactionDto.getAccountId().isEmpty())
-            throw new Exception("AccountId can't be empty or null");
-        lock.tryLock(LOCK_TIMEOUT, TimeUnit.MILLISECONDS);
-        try {
-            return transactionDtoConverter.toTransactionDTO(updateTransaction(transactionDto));
-        } finally {
-            lock.unlock();
-        }
-    }
-
-    @Transactional
-    public Transaction updateTransaction(@NotNull final TransactionDto transactionDto) throws Exception {
-        final Transaction transaction = transactionRepository.findById(transactionDto.getId()).orElse(null);
-        if (transaction == null)
-            throw new Exception("Transaction not found");
-        final Transaction convertedNewTransaction = transactionDtoConverter.toTransactionEntity(transactionDto);
-        final Account account = accountRepository.findById(transactionDto.getAccountId()).orElse(null);
-        if (account == null)
-            throw new Exception("Account not found");
-        if (transactionDto.getSum().compareTo(BigDecimal.valueOf(0)) != 0) {
-            final BigDecimal withdrawSum = transactionDto.getSum().subtract(transaction.getSum());
-            if (withdrawSum.intValue() < 0 &&
-                    Math.abs(withdrawSum.intValue()) > account.getBalance().intValue())
-                throw new Exception("Insufficient funds in the account");
-            account.addBalance(withdrawSum);
-        } else {
-            convertedNewTransaction.setSum(transaction.getSum());
-        }
-        convertedNewTransaction.setAccount(account);
-        return transactionRepository.saveAndFlush(convertedNewTransaction);
-    }
-
     public void delete(String id) throws Exception {
         if (id == null || id.isEmpty()) throw new NullPointerException("Id can't by empty or null");
         lock.tryLock(LOCK_TIMEOUT, TimeUnit.MILLISECONDS);
@@ -150,7 +114,7 @@ public class TransactionService {
     }
 
     @Transactional
-    public void deleteTransaction(@NotNull final String id) throws Exception {
+    protected void deleteTransaction(@NotNull final String id) throws Exception {
         final Transaction transaction = transactionRepository.findById(id).orElse(null);
         if (transaction == null)
             throw new Exception("Transaction not found");

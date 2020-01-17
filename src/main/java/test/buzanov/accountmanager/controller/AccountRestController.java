@@ -1,11 +1,11 @@
 package test.buzanov.accountmanager.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import test.buzanov.accountmanager.dto.AccountDto;
-import test.buzanov.accountmanager.service.AccountService;
+import test.buzanov.accountmanager.service.IAccountService;
 
 import java.util.Collection;
 
@@ -13,8 +13,12 @@ import java.util.Collection;
 @RequestMapping(value = "/account")
 public class AccountRestController {
 
-    @Autowired
-    private AccountService accountService;
+    private final IAccountService accountService;
+
+    public AccountRestController(@Qualifier(value = "accountService")
+                                 final IAccountService accountService) {
+        this.accountService = accountService;
+    }
 
     @GetMapping("/findAll")
     public ResponseEntity<Collection<AccountDto>> findAll() {
