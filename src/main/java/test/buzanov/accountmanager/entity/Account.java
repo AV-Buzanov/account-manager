@@ -1,9 +1,6 @@
 package test.buzanov.accountmanager.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.CascadeType;
@@ -15,9 +12,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@Data
 @Table(name = "app_account")
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Account extends AbstractEntity {

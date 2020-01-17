@@ -40,13 +40,19 @@ public class TransactionService {
 
     @NotNull
     public Collection<TransactionDto> findAll() {
-        return transactionRepository.findAll().stream().map(transactionDtoConverter::toTransactionDTO).collect(Collectors.toList());
+        return transactionRepository.findAll()
+                .stream()
+                .map(transactionDtoConverter::toTransactionDTO)
+                .collect(Collectors.toList());
     }
 
     @NotNull
     public Collection<TransactionDto> findAllByAccount(@Nullable final String id) throws Exception {
         if (id == null || id.isEmpty()) throw new Exception("Id can't by empty or null");
-        return transactionRepository.findAllByAccountId(id).stream().map(transactionDtoConverter::toTransactionDTO).collect(Collectors.toList());
+        return transactionRepository.findAllByAccountId(id)
+                .stream()
+                .map(transactionDtoConverter::toTransactionDTO)
+                .collect(Collectors.toList());
     }
 
     @Nullable
@@ -128,7 +134,7 @@ public class TransactionService {
     }
 
     public void delete(String id) throws Exception {
-        if (id == null || id.isEmpty()) throw new Exception("Id can't by empty or null");
+        if (id == null || id.isEmpty()) throw new NullPointerException("Id can't by empty or null");
         lock.tryLock(40000, TimeUnit.MILLISECONDS);
         try {
             deleteTransaction(id);

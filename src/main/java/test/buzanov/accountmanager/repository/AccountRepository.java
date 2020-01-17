@@ -10,6 +10,6 @@ import test.buzanov.accountmanager.entity.Account;
 @Repository
 public interface AccountRepository extends JpaRepository<Account, String> {
     @Modifying
-    @Query(value = "update Account a set a.balance = a.balance+:sum where a.id = :id")
-    void sumAccountBalanceById(@Param("id") String id, @Param("sum") int sum);
+    @Query(value = "update Account a set a.balance = :balance where a.id = :id")
+    void setAccountBalanceById(@Param("id") String id, @Param("balance") int balance);
 }

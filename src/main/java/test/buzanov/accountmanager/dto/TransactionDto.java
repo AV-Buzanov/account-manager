@@ -1,9 +1,6 @@
 package test.buzanov.accountmanager.dto;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import test.buzanov.accountmanager.enumurated.TransactionType;
@@ -13,10 +10,9 @@ import java.util.Date;
 import java.util.UUID;
 
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
-@ToString
+@AllArgsConstructor
 public class TransactionDto {
     @Nullable
     private String id = UUID.randomUUID().toString();

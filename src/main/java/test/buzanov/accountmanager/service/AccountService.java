@@ -9,6 +9,7 @@ import test.buzanov.accountmanager.dto.AccountDto;
 import test.buzanov.accountmanager.dto.converter.AccountDtoConverter;
 import test.buzanov.accountmanager.entity.Account;
 import test.buzanov.accountmanager.repository.AccountRepository;
+import test.buzanov.accountmanager.repository.TransactionRepository;
 
 import java.util.Collection;
 import java.util.Date;
@@ -20,6 +21,10 @@ public class AccountService {
     @NotNull
     @Autowired
     private AccountRepository accountRepository;
+
+    @NotNull
+    @Autowired
+    private TransactionRepository transactionRepository;
 
     @NotNull
     @Autowired

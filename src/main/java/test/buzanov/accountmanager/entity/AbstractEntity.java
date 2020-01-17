@@ -1,9 +1,6 @@
 package test.buzanov.accountmanager.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.Column;
@@ -13,8 +10,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @MappedSuperclass
