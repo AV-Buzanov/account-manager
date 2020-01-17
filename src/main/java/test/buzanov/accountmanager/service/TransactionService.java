@@ -9,9 +9,11 @@ import test.buzanov.accountmanager.dto.TransactionDto;
 import test.buzanov.accountmanager.dto.converter.TransactionDtoConverter;
 import test.buzanov.accountmanager.entity.Account;
 import test.buzanov.accountmanager.entity.Transaction;
+import test.buzanov.accountmanager.enumurated.TransactionType;
 import test.buzanov.accountmanager.repository.AccountRepository;
 import test.buzanov.accountmanager.repository.TransactionRepository;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
@@ -59,8 +61,8 @@ public class TransactionService {
             throw new Exception("Id can't be empty or null");
         if (transactionDto.getAccountId() == null || transactionDto.getAccountId().isEmpty())
             throw new Exception("AccountId can't be empty or null");
-        if (transactionDto.getSum() == 0)
-            throw new Exception("Sum can't be 0");
+        if (transactionDto.getSum().compareTo(BigDecimal.valueOf(0)) <= 0)
+            throw new Exception("Sum can't be negative or 0");
         if (transactionRepository.existsById(transactionDto.getId()))
             throw new Exception("Transaction id already exists");
         lock.tryLock(40000, TimeUnit.MILLISECONDS);
@@ -79,10 +81,12 @@ public class TransactionService {
         final Account account = accountRepository.findById(transactionDto.getAccountId()).orElse(null);
         if (account == null)
             throw new Exception("Account not found");
-        if (transactionDto.getSum() < 0 &&
-                Math.abs(transactionDto.getSum()) > account.getBalance())
-            throw new Exception("Insufficient funds in the account");
-        account.sumBalance(transactionDto.getSum());
+        if (transactionDto.getTransactionType().equals(TransactionType.WITHDRAW)) {
+            if (transactionDto.getSum().compareTo(account.getBalance()) > 0)
+                throw new Exception("Insufficient funds in the account");
+            account.subBalance(transactionDto.getSum());
+        } else if (transactionDto.getTransactionType().equals(TransactionType.DEPOSIT))
+            account.addBalance(transactionDto.getSum());
         transaction.setAccount(account);
         return transactionRepository.saveAndFlush(transaction);
     }
@@ -110,12 +114,12 @@ public class TransactionService {
         final Account account = accountRepository.findById(transactionDto.getAccountId()).orElse(null);
         if (account == null)
             throw new Exception("Account not found");
-        if (transactionDto.getSum() != 0) {
-            int withdrawSum = transactionDto.getSum() - transaction.getSum();
-            if (withdrawSum < 0 &&
-                    Math.abs(withdrawSum) > account.getBalance())
+        if (transactionDto.getSum().compareTo(BigDecimal.valueOf(0)) != 0) {
+            final BigDecimal withdrawSum = transactionDto.getSum().subtract(transaction.getSum());
+            if (withdrawSum.intValue() < 0 &&
+                    Math.abs(withdrawSum.intValue()) > account.getBalance().intValue())
                 throw new Exception("Insufficient funds in the account");
-            account.sumBalance(withdrawSum);
+            account.addBalance(withdrawSum);
         } else {
             convertedNewTransaction.setSum(transaction.getSum());
         }
@@ -141,11 +145,11 @@ public class TransactionService {
         final Account account = transaction.getAccount();
         if (account == null)
             throw new Exception("Account not found");
-        int withdrawSum = -transaction.getSum();
-        if (withdrawSum < 0 &&
-                Math.abs(withdrawSum) > account.getBalance())
+        BigDecimal withdrawSum = transaction.getSum().negate();
+        if (withdrawSum.intValue() < 0 &&
+                Math.abs(withdrawSum.intValue()) > account.getBalance().intValue())
             throw new Exception("Insufficient funds in the account");
-        account.sumBalance(withdrawSum);
+        account.addBalance(withdrawSum);
         accountRepository.saveAndFlush(account);
         transactionRepository.deleteById(id);
     }

@@ -23,6 +23,7 @@ public class TransactionDtoConverter {
 //            transaction.setAccount(accountRepository.findById(transactionDto.getAccountId()).orElse(null));
         transaction.setSum(transactionDto.getSum());
         transaction.setDescription(transactionDto.getDescription());
+        transaction.setTransactionType(transactionDto.getTransactionType());
         return transaction;
     }
 
@@ -36,6 +37,7 @@ public class TransactionDtoConverter {
         if (transaction.getAccount() != null)
             transactionDto.setAccountId(transaction.getAccount().getId());
         transactionDto.setDescription(transaction.getDescription());
+        transactionDto.setTransactionType(transaction.getTransactionType());
         return transactionDto;
     }
 }

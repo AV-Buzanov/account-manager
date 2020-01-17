@@ -4,9 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import test.buzanov.accountmanager.enumurated.TransactionType;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "app_transaction")
@@ -24,5 +27,9 @@ public class Transaction extends AbstractEntity {
     @Nullable
     private String description;
 
-    private int sum;
+    private BigDecimal sum;
+
+    @NotNull
+    @Enumerated(value = EnumType.STRING)
+    private TransactionType transactionType;
 }

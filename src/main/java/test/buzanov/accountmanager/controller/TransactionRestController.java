@@ -10,7 +10,6 @@ import test.buzanov.accountmanager.service.TransactionService;
 
 import java.util.Collection;
 
-
 @RestController
 @RequestMapping(value = "/transaction")
 public class TransactionRestController {

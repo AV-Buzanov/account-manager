@@ -14,8 +14,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import test.buzanov.accountmanager.dto.AccountDto;
 import test.buzanov.accountmanager.dto.TransactionDto;
+import test.buzanov.accountmanager.enumurated.TransactionType;
 import test.buzanov.accountmanager.repository.AccountRepository;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
@@ -38,7 +40,7 @@ public class IntegrationTest {
     @Before
     public void before() {
         final AccountDto accountDto = new AccountDto();
-        accountDto.setBalance((NUMBER_OF_THREADS - NUMBER_OF_FAIL_THREADS) * 10 + 2);
+        accountDto.setBalance(BigDecimal.valueOf((NUMBER_OF_THREADS - NUMBER_OF_FAIL_THREADS) * 10 + 2));
         HttpEntity<AccountDto> entity = new HttpEntity<AccountDto>(accountDto);
         ResponseEntity<AccountDto> response = restTemplate.exchange("/api/account/create", HttpMethod.PUT, entity, AccountDto.class);
         accountId = response.getBody().getId();
@@ -57,7 +59,8 @@ public class IntegrationTest {
         final Callable<String> callable = () -> {
             final HttpEntity<TransactionDto> entity = new HttpEntity<TransactionDto>(new TransactionDto());
             entity.getBody().setAccountId(accountId);
-            entity.getBody().setSum(-10);
+            entity.getBody().setSum(BigDecimal.valueOf(10));
+            entity.getBody().setTransactionType(TransactionType.WITHDRAW);
             final ResponseEntity<TransactionDto> response = restTemplate
                     .exchange("/api/transaction/create", HttpMethod.PUT, entity, TransactionDto.class);
             return String.valueOf(response.getStatusCodeValue());
@@ -82,7 +85,7 @@ public class IntegrationTest {
                 .exchange("/api/account/find/" + accountId, HttpMethod.GET, null, AccountDto.class);
         Assert.assertNotNull("responseAccount body is null", responseAccount.getBody());
 
-        int accountBalance = responseAccount.getBody().getBalance();
+        int accountBalance = responseAccount.getBody().getBalance().intValue();
 
         Assert.assertEquals("Account balance incorrect: " + accountBalance, 2, accountBalance);
     }

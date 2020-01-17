@@ -10,6 +10,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,9 +26,13 @@ public class Account extends AbstractEntity {
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     private Set<Transaction> transactions = new HashSet<>();
 
-    private int balance;
+    private BigDecimal balance;
 
-    public void sumBalance(int sum) {
-        this.balance = this.balance + sum;
+    public void addBalance(BigDecimal sum) {
+        this.balance = this.balance.add(sum);
+    }
+
+    public void subBalance(BigDecimal sum) {
+        this.balance = this.balance.subtract(sum);
     }
 }

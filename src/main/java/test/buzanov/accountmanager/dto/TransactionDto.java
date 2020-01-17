@@ -4,8 +4,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import test.buzanov.accountmanager.enumurated.TransactionType;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.UUID;
 
@@ -27,5 +30,9 @@ public class TransactionDto {
     @Nullable
     private Date creation;
 
-    private int sum;
+    @Nullable
+    private BigDecimal sum;
+
+    @NotNull
+    private TransactionType transactionType;
 }

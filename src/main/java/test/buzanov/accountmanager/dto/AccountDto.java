@@ -3,6 +3,7 @@ package test.buzanov.accountmanager.dto;
 import lombok.*;
 import org.jetbrains.annotations.Nullable;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.UUID;
 
@@ -20,5 +21,6 @@ public class AccountDto {
     @Nullable
     private Date creation;
 
-    private int balance;
+    @Nullable
+    private BigDecimal balance;
 }
