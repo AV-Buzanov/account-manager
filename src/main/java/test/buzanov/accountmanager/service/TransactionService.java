@@ -157,11 +157,12 @@ public class TransactionService {
         final Account account = transaction.getAccount();
         if (account == null)
             throw new Exception("Account not found");
-        BigDecimal withdrawSum = transaction.getSum().negate();
-        if (withdrawSum.intValue() < 0 &&
-                Math.abs(withdrawSum.intValue()) > account.getBalance().intValue())
-            throw new Exception("Insufficient funds in the account");
-        account.addBalance(withdrawSum);
+        if (transaction.getTransactionType().equals(TransactionType.WITHDRAW)) {
+            if (transaction.getSum().compareTo(account.getBalance()) > 0)
+                throw new Exception("Insufficient funds in the account");
+            account.subBalance(transaction.getSum());
+        } else if (transaction.getTransactionType().equals(TransactionType.DEPOSIT))
+            account.addBalance(transaction.getSum());
         accountRepository.saveAndFlush(account);
         transactionRepository.deleteById(id);
     }

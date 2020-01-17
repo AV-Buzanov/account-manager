@@ -8,6 +8,9 @@ import test.buzanov.accountmanager.dto.TransactionDto;
 import test.buzanov.accountmanager.entity.Transaction;
 import test.buzanov.accountmanager.repository.AccountRepository;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 @Component
 public class TransactionDtoConverter {
     @NotNull
@@ -19,9 +22,8 @@ public class TransactionDtoConverter {
         if (transactionDto == null || transactionDto.getId() == null) return null;
         @NotNull final Transaction transaction = new Transaction();
         transaction.setId(transactionDto.getId());
-//        if (transactionDto.getAccountId() != null)
-//            transaction.setAccount(accountRepository.findById(transactionDto.getAccountId()).orElse(null));
         transaction.setSum(transactionDto.getSum());
+        transaction.getSum().setScale(2, RoundingMode.DOWN);
         transaction.setDescription(transactionDto.getDescription());
         transaction.setTransactionType(transactionDto.getTransactionType());
         return transaction;

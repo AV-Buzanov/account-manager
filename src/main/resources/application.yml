@@ -2,11 +2,11 @@ spring:
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-        hbm2ddl.auto: create
+        hbm2ddl.auto: update
   datasource:
     url: jdbc:postgresql://localhost:5432/mm?useUnicode=true&serverTimezone=Europe/Moscow&useSSL=false
     username: postgres
@@ -17,5 +17,3 @@ spring:
       path: /api
 server:
   port: 8080
-lock:
-  timeout: 40000
