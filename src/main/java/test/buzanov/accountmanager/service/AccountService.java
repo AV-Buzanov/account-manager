@@ -2,7 +2,6 @@ package test.buzanov.accountmanager.service;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import test.buzanov.accountmanager.dto.AccountDto;
@@ -12,23 +11,27 @@ import test.buzanov.accountmanager.repository.AccountRepository;
 import test.buzanov.accountmanager.repository.TransactionRepository;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.stream.Collectors;
 
 @Component
 public class AccountService {
 
     @NotNull
-    @Autowired
-    private AccountRepository accountRepository;
+    private final AccountRepository accountRepository;
 
     @NotNull
-    @Autowired
-    private TransactionRepository transactionRepository;
+    private final TransactionRepository transactionRepository;
 
     @NotNull
-    @Autowired
-    private AccountDtoConverter accountDtoConverter;
+    private final AccountDtoConverter accountDtoConverter;
+
+    public AccountService(@NotNull final AccountRepository accountRepository,
+                          @NotNull final TransactionRepository transactionRepository,
+                          @NotNull final AccountDtoConverter accountDtoConverter) {
+        this.accountRepository = accountRepository;
+        this.transactionRepository = transactionRepository;
+        this.accountDtoConverter = accountDtoConverter;
+    }
 
     public Collection<AccountDto> findAll() {
         return accountRepository.findAll().stream().map(accountDtoConverter::toAccountDTO).collect(Collectors.toList());

@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 @Table(name = "app_transaction")
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = true, exclude = "account")
 public class Transaction extends AbstractEntity {
 
     @Nullable

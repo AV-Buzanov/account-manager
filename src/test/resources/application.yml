@@ -17,3 +17,5 @@ spring:
       path: /api
 server:
   port: 8080
+lock:
+  timeout: 40000

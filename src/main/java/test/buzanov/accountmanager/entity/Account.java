@@ -16,6 +16,7 @@ import java.util.Set;
 @Table(name = "app_account")
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = true, exclude = "transactions")
 public class Account extends AbstractEntity {
 
     @NotNull

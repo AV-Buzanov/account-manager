@@ -2,7 +2,6 @@ package test.buzanov.accountmanager.service;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import test.buzanov.accountmanager.dto.TransactionDto;
@@ -23,20 +22,27 @@ import java.util.stream.Collectors;
 @Service
 public class TransactionService {
 
-    @NotNull
-    @Autowired
-    private TransactionRepository transactionRepository;
-
-    @NotNull
-    @Autowired
-    private AccountRepository accountRepository;
-
-    @NotNull
-    @Autowired
-    private TransactionDtoConverter transactionDtoConverter;
+    private static final long LOCK_TIMEOUT = 40000;
 
     @NotNull
     private Lock lock = new ReentrantLock();
+
+    @NotNull
+    private final TransactionRepository transactionRepository;
+
+    @NotNull
+    private final AccountRepository accountRepository;
+
+    @NotNull
+    private final TransactionDtoConverter transactionDtoConverter;
+
+    public TransactionService(@NotNull final TransactionRepository transactionRepository,
+                              @NotNull final AccountRepository accountRepository,
+                              @NotNull final TransactionDtoConverter transactionDtoConverter) {
+        this.transactionRepository = transactionRepository;
+        this.accountRepository = accountRepository;
+        this.transactionDtoConverter = transactionDtoConverter;
+    }
 
     @NotNull
     public Collection<TransactionDto> findAll() {
@@ -71,7 +77,7 @@ public class TransactionService {
             throw new Exception("Sum can't be negative or 0");
         if (transactionRepository.existsById(transactionDto.getId()))
             throw new Exception("Transaction id already exists");
-        lock.tryLock(40000, TimeUnit.MILLISECONDS);
+        lock.tryLock(LOCK_TIMEOUT, TimeUnit.MILLISECONDS);
         try {
             return transactionDtoConverter.toTransactionDTO(doTransaction(transactionDto));
         } finally {
@@ -103,7 +109,7 @@ public class TransactionService {
             throw new Exception("Id can't be empty or null");
         if (transactionDto.getAccountId() == null || transactionDto.getAccountId().isEmpty())
             throw new Exception("AccountId can't be empty or null");
-        lock.tryLock(40000, TimeUnit.MILLISECONDS);
+        lock.tryLock(LOCK_TIMEOUT, TimeUnit.MILLISECONDS);
         try {
             return transactionDtoConverter.toTransactionDTO(updateTransaction(transactionDto));
         } finally {
@@ -135,7 +141,7 @@ public class TransactionService {
 
     public void delete(String id) throws Exception {
         if (id == null || id.isEmpty()) throw new NullPointerException("Id can't by empty or null");
-        lock.tryLock(40000, TimeUnit.MILLISECONDS);
+        lock.tryLock(LOCK_TIMEOUT, TimeUnit.MILLISECONDS);
         try {
             deleteTransaction(id);
         } finally {
