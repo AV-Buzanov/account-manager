@@ -32,7 +32,7 @@ public class TransactionalActions implements ITransactionalActions{
         this.transactionDtoConverter = transactionDtoConverter;
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(rollbackFor = Exception.class, isolation = Isolation.SERIALIZABLE)
     public Transaction doTransaction(@NotNull final TransactionDto transactionDto) throws Exception {
         final Transaction transaction = transactionDtoConverter.toTransactionEntity(transactionDto);
         if (transactionDto.getAccountId() == null || transaction == null)
@@ -50,7 +50,7 @@ public class TransactionalActions implements ITransactionalActions{
         return transactionRepository.saveAndFlush(transaction);
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(rollbackFor = Exception.class, isolation = Isolation.SERIALIZABLE)
     public void deleteTransaction(@NotNull final String id) throws Exception {
         final Transaction transaction = transactionRepository.findById(id).orElse(null);
         if (transaction == null)
