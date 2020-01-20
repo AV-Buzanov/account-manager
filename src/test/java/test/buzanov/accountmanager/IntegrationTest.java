@@ -25,7 +25,7 @@ import java.util.concurrent.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class IntegrationTest {
-    private final static int NUMBER_OF_THREADS = 500;
+    private final static int NUMBER_OF_THREADS = 1000;
 
     private final static int NUMBER_OF_FAIL_THREADS = 100;
 
@@ -37,10 +37,13 @@ public class IntegrationTest {
 
     private String accountId;
 
+    private BigDecimal accountBalanceGlobal;
+
     @Before
     public void before() {
         final AccountDto accountDto = new AccountDto();
-        accountDto.setBalance(BigDecimal.valueOf((NUMBER_OF_THREADS - NUMBER_OF_FAIL_THREADS) * 10 + 2));
+        accountBalanceGlobal = BigDecimal.valueOf((NUMBER_OF_THREADS - NUMBER_OF_FAIL_THREADS) * 10).add(BigDecimal.valueOf(2.5));
+        accountDto.setBalance(accountBalanceGlobal);
         HttpEntity<AccountDto> entity = new HttpEntity<AccountDto>(accountDto);
         ResponseEntity<AccountDto> response = restTemplate.exchange("/api/account/create", HttpMethod.PUT, entity, AccountDto.class);
         accountId = response.getBody().getId();
@@ -70,14 +73,16 @@ public class IntegrationTest {
             futures.add(executorService.submit(callable));
         }
 
-        long countOfErrorRequests = futures.stream().filter(s -> {
-            try {
-                return "500".equals(s.get());
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-                return false;
-            }
-        }).count();
+        long countOfErrorRequests = futures
+                .stream()
+                .filter(s -> {
+                    try {
+                        return !"200".equals(s.get());
+                    } catch (InterruptedException | ExecutionException e) {
+                        e.printStackTrace();
+                        return false;
+                    }
+                }).count();
 
         Assert.assertEquals("Count of error request incorrect: ", NUMBER_OF_FAIL_THREADS, countOfErrorRequests);
 
@@ -85,8 +90,62 @@ public class IntegrationTest {
                 .exchange("/api/account/find/" + accountId, HttpMethod.GET, null, AccountDto.class);
         Assert.assertNotNull("responseAccount body is null", responseAccount.getBody());
 
-        int accountBalance = responseAccount.getBody().getBalance().intValue();
+        BigDecimal accountBalance = responseAccount.getBody().getBalance();
 
-        Assert.assertEquals("Account balance incorrect: " + accountBalance, 2, accountBalance);
+        Assert.assertEquals("Account balance incorrect: " + accountBalance, BigDecimal.valueOf(2.5), accountBalance.stripTrailingZeros());
+    }
+
+    @Test
+    public void testWithdrawAndDeposit() {
+        final ExecutorService executorService = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
+        final List<Future<String>> futures = new ArrayList<>();
+        final Callable<String> callableDeposit = () -> {
+            final HttpEntity<TransactionDto> entityDeposit = new HttpEntity<TransactionDto>(new TransactionDto());
+            entityDeposit.getBody().setAccountId(accountId);
+            entityDeposit.getBody().setSum(BigDecimal.valueOf(10.3));
+            entityDeposit.getBody().setTransactionType(TransactionType.DEPOSIT);
+            final ResponseEntity<TransactionDto> responseDeposit = restTemplate
+                    .exchange("/api/transaction/create", HttpMethod.PUT, entityDeposit, TransactionDto.class);
+
+            return String.valueOf(responseDeposit.getStatusCodeValue());
+        };
+
+        final Callable<String> callableWithdraw = () -> {
+            final HttpEntity<TransactionDto> entityWithdraw = new HttpEntity<TransactionDto>(new TransactionDto());
+            entityWithdraw.getBody().setAccountId(accountId);
+            entityWithdraw.getBody().setSum(BigDecimal.valueOf(10.5));
+            entityWithdraw.getBody().setTransactionType(TransactionType.WITHDRAW);
+            final ResponseEntity<TransactionDto> responseWithdraw = restTemplate
+                    .exchange("/api/transaction/create", HttpMethod.PUT, entityWithdraw, TransactionDto.class);
+
+            return String.valueOf(responseWithdraw.getStatusCodeValue());
+        };
+
+        for (int i = 0; i < NUMBER_OF_THREADS/2; i++) {
+            futures.add(executorService.submit(callableDeposit));
+            futures.add(executorService.submit(callableWithdraw));
+        }
+        long countOfErrorRequests = futures
+                .stream()
+                .filter(s -> {
+                    try {
+                        return !"200".equals(s.get());
+                    } catch (InterruptedException | ExecutionException e) {
+                        e.printStackTrace();
+                        return false;
+                    }
+                }).count();
+
+        Assert.assertEquals("Count of error request incorrect: ", 0, countOfErrorRequests);
+
+        final ResponseEntity<AccountDto> responseAccount = restTemplate
+                .exchange("/api/account/find/" + accountId, HttpMethod.GET, null, AccountDto.class);
+        Assert.assertNotNull("responseAccount body is null", responseAccount.getBody());
+
+        BigDecimal accountBalance = responseAccount.getBody().getBalance();
+
+        Assert.assertEquals("Account balance incorrect: "
+                , accountBalanceGlobal.subtract(BigDecimal.valueOf(NUMBER_OF_THREADS/2).multiply(BigDecimal.valueOf(0.2)))
+                , accountBalance.stripTrailingZeros());
     }
 }
