@@ -7,7 +7,7 @@ import test.buzanov.accountmanager.dto.AccountDto;
 import test.buzanov.accountmanager.entity.Account;
 
 @Component
-public class AccountDtoConverter {
+public class AccountDtoConverter implements IAccountDtoConverter{
     @Nullable
     public Account toAccountEntity(@Nullable final AccountDto accountDto) {
         if (accountDto == null || accountDto.getId() == null) return null;

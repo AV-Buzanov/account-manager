@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import test.buzanov.accountmanager.dto.AccountDto;
 import test.buzanov.accountmanager.dto.converter.AccountDtoConverter;
+import test.buzanov.accountmanager.dto.converter.IAccountDtoConverter;
 import test.buzanov.accountmanager.entity.Account;
 import test.buzanov.accountmanager.repository.AccountRepository;
 import test.buzanov.accountmanager.repository.TransactionRepository;
@@ -23,11 +24,11 @@ public class AccountService implements IAccountService {
     private final TransactionRepository transactionRepository;
 
     @NotNull
-    private final AccountDtoConverter accountDtoConverter;
+    private final IAccountDtoConverter accountDtoConverter;
 
     public AccountService(@NotNull final AccountRepository accountRepository,
                           @NotNull final TransactionRepository transactionRepository,
-                          @NotNull final AccountDtoConverter accountDtoConverter) {
+                          @NotNull final IAccountDtoConverter accountDtoConverter) {
         this.accountRepository = accountRepository;
         this.transactionRepository = transactionRepository;
         this.accountDtoConverter = accountDtoConverter;

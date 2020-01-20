@@ -12,10 +12,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 @Component
-public class TransactionDtoConverter {
-    @NotNull
-    @Autowired
-    private AccountRepository accountRepository;
+public class TransactionDtoConverter implements ITransactionDtoConverter{
 
     @Nullable
     public Transaction toTransactionEntity(@Nullable final TransactionDto transactionDto) {

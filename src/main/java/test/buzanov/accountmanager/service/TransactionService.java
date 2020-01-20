@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import test.buzanov.accountmanager.dto.TransactionDto;
+import test.buzanov.accountmanager.dto.converter.ITransactionDtoConverter;
 import test.buzanov.accountmanager.dto.converter.TransactionDtoConverter;
 import test.buzanov.accountmanager.entity.Account;
 import test.buzanov.accountmanager.entity.Transaction;
@@ -34,11 +35,11 @@ public class TransactionService implements ITransactionService{
     private final AccountRepository accountRepository;
 
     @NotNull
-    private final TransactionDtoConverter transactionDtoConverter;
+    private final ITransactionDtoConverter transactionDtoConverter;
 
     public TransactionService(@NotNull final TransactionRepository transactionRepository,
                               @NotNull final AccountRepository accountRepository,
-                              @NotNull final TransactionDtoConverter transactionDtoConverter) {
+                              @NotNull final ITransactionDtoConverter transactionDtoConverter) {
         this.transactionRepository = transactionRepository;
         this.accountRepository = accountRepository;
         this.transactionDtoConverter = transactionDtoConverter;
@@ -86,7 +87,7 @@ public class TransactionService implements ITransactionService{
     }
 
     @Transactional
-    protected Transaction doTransaction(@NotNull final TransactionDto transactionDto) throws Exception {
+    public Transaction doTransaction(@NotNull final TransactionDto transactionDto) throws Exception {
         final Transaction transaction = transactionDtoConverter.toTransactionEntity(transactionDto);
         if (transactionDto.getAccountId() == null || transaction == null)
             throw new Exception("Null");
@@ -114,7 +115,7 @@ public class TransactionService implements ITransactionService{
     }
 
     @Transactional
-    protected void deleteTransaction(@NotNull final String id) throws Exception {
+    public void deleteTransaction(@NotNull final String id) throws Exception {
         final Transaction transaction = transactionRepository.findById(id).orElse(null);
         if (transaction == null)
             throw new Exception("Transaction not found");
