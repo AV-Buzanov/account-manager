@@ -23,7 +23,7 @@ public class Account extends AbstractEntity {
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     private Set<Transaction> transactions = new HashSet<>();
 
-    private BigDecimal balance;
+    private BigDecimal balance = new BigDecimal("0");
 
     public void addBalance(BigDecimal sum) {
         this.balance = this.balance.add(sum);

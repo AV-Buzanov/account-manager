@@ -25,7 +25,7 @@ import java.util.concurrent.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class IntegrationTest {
-    private final static int NUMBER_OF_THREADS = 1000;
+    private final static int NUMBER_OF_THREADS = 2000;
 
     private final static int NUMBER_OF_FAIL_THREADS = 100;
 
@@ -37,17 +37,14 @@ public class IntegrationTest {
 
     private String accountId;
 
-    private BigDecimal accountBalanceGlobal;
-
     @Before
     public void before() {
         final AccountDto accountDto = new AccountDto();
-        accountBalanceGlobal = BigDecimal.valueOf((NUMBER_OF_THREADS - NUMBER_OF_FAIL_THREADS) * 10).add(BigDecimal.valueOf(2.5));
-        accountDto.setBalance(accountBalanceGlobal);
         HttpEntity<AccountDto> entity = new HttpEntity<AccountDto>(accountDto);
         ResponseEntity<AccountDto> response = restTemplate.exchange("/api/account/create", HttpMethod.PUT, entity, AccountDto.class);
+        Assert.assertEquals("Account create fail", 200, response.getStatusCodeValue());
+        Assert.assertNotNull(response.getBody().getId());
         accountId = response.getBody().getId();
-        System.out.println(response.getBody().toString());
     }
 
     @After
@@ -57,6 +54,15 @@ public class IntegrationTest {
 
     @Test
     public void testWithdrawOver() {
+
+        final HttpEntity<TransactionDto> entityDeposit = new HttpEntity<TransactionDto>(new TransactionDto());
+        entityDeposit.getBody().setAccountId(accountId);
+        entityDeposit.getBody().setSum(BigDecimal.valueOf((NUMBER_OF_THREADS - NUMBER_OF_FAIL_THREADS) * 10).add(BigDecimal.valueOf(2.5)));
+        entityDeposit.getBody().setTransactionType(TransactionType.DEPOSIT);
+        final ResponseEntity<TransactionDto> responseDeposit = restTemplate
+                .exchange("/api/transaction/create", HttpMethod.PUT, entityDeposit, TransactionDto.class);
+        Assert.assertEquals("Deposit transaction fail", 200, responseDeposit.getStatusCodeValue());
+
         final ExecutorService executorService = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
         final List<Future<String>> futures = new ArrayList<>();
         final Callable<String> callable = () -> {
@@ -85,18 +91,25 @@ public class IntegrationTest {
                 }).count();
 
         Assert.assertEquals("Count of error request incorrect: ", NUMBER_OF_FAIL_THREADS, countOfErrorRequests);
-
         final ResponseEntity<AccountDto> responseAccount = restTemplate
                 .exchange("/api/account/find/" + accountId, HttpMethod.GET, null, AccountDto.class);
         Assert.assertNotNull("responseAccount body is null", responseAccount.getBody());
-
         BigDecimal accountBalance = responseAccount.getBody().getBalance();
-
-        Assert.assertEquals("Account balance incorrect: " + accountBalance, BigDecimal.valueOf(2.5), accountBalance.stripTrailingZeros());
+        Assert.assertEquals("Account balance incorrect: " + accountBalance
+                , BigDecimal.valueOf(2.5)
+                , accountBalance.stripTrailingZeros());
     }
 
     @Test
     public void testWithdrawAndDeposit() {
+        final HttpEntity<TransactionDto> entityDeposit1 = new HttpEntity<TransactionDto>(new TransactionDto());
+        entityDeposit1.getBody().setAccountId(accountId);
+        entityDeposit1.getBody().setSum(BigDecimal.valueOf(NUMBER_OF_THREADS));
+        entityDeposit1.getBody().setTransactionType(TransactionType.DEPOSIT);
+        final ResponseEntity<TransactionDto> responseDeposit1 = restTemplate
+                .exchange("/api/transaction/create", HttpMethod.PUT, entityDeposit1, TransactionDto.class);
+        Assert.assertEquals("Deposit transaction fail", 200, responseDeposit1.getStatusCodeValue());
+
         final ExecutorService executorService = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
         final List<Future<String>> futures = new ArrayList<>();
         final Callable<String> callableDeposit = () -> {
@@ -121,7 +134,7 @@ public class IntegrationTest {
             return String.valueOf(responseWithdraw.getStatusCodeValue());
         };
 
-        for (int i = 0; i < NUMBER_OF_THREADS/2; i++) {
+        for (int i = 0; i < NUMBER_OF_THREADS / 2; i++) {
             futures.add(executorService.submit(callableDeposit));
             futures.add(executorService.submit(callableWithdraw));
         }
@@ -137,15 +150,15 @@ public class IntegrationTest {
                 }).count();
 
         Assert.assertEquals("Count of error request incorrect: ", 0, countOfErrorRequests);
-
         final ResponseEntity<AccountDto> responseAccount = restTemplate
                 .exchange("/api/account/find/" + accountId, HttpMethod.GET, null, AccountDto.class);
         Assert.assertNotNull("responseAccount body is null", responseAccount.getBody());
-
         BigDecimal accountBalance = responseAccount.getBody().getBalance();
-
         Assert.assertEquals("Account balance incorrect: "
-                , accountBalanceGlobal.subtract(BigDecimal.valueOf(NUMBER_OF_THREADS/2).multiply(BigDecimal.valueOf(0.2)))
+                , BigDecimal.valueOf(NUMBER_OF_THREADS)
+                        .subtract(BigDecimal.valueOf(NUMBER_OF_THREADS / 2)
+                                .multiply(BigDecimal.valueOf(0.2)))
+                        .stripTrailingZeros()
                 , accountBalance.stripTrailingZeros());
     }
 }

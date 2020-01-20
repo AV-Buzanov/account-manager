@@ -13,7 +13,6 @@ public class AccountDtoConverter {
         if (accountDto == null || accountDto.getId() == null) return null;
         @NotNull final Account account = new Account();
         account.setId(accountDto.getId());
-        account.setBalance(accountDto.getBalance());
         return account;
     }
 
