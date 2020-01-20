@@ -17,3 +17,11 @@ spring:
       path: /api
 server:
   port: 8080
+logging:
+  level:
+    ROOT: ERROR
+    org.springframework: DEBUG
+    org.springframework.data: DEBUG
+  file:
+      name: spring-boot-test-logger-log4j2.log
+      path: /testlogs/
