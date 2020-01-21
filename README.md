@@ -17,4 +17,15 @@ java -jar
 * Java 1.8
 * Maven 3.6.0 
 * Spring Boot 2.2.2.RELEASE
+* * Spring Data JPA starter
+* * Spring Web starter
+* * Spring Test starter
+* * Spring log4j2 starter
+* База данных: 
+* * postgresql
+* Документирование: 
+* * Javadoc, enunciate-maven-plugin
+
+
+
 
