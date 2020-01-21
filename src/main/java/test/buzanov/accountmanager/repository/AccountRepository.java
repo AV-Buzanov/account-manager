@@ -10,6 +10,11 @@ import test.buzanov.accountmanager.entity.Account;
 
 import java.math.BigDecimal;
 
+/**
+ * Spring Data JPA репозиторий для сущности Account.
+ * @author Aleksey Buzanov
+ */
+
 @Repository
 public interface AccountRepository extends JpaRepository<Account, String> {
     @Modifying

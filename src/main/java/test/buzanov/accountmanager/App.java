@@ -6,14 +6,12 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * @author Aleksey Buzanov
- *
  */
+
 @SpringBootApplication
 @EnableTransactionManagement
-public class App 
-{
-    public static void main( String[] args )
-    {
+public class App {
+    public static void main(String[] args) {
         SpringApplication.run(App.class, args);
     }
 }

@@ -1,12 +1,20 @@
 package test.buzanov.accountmanager.entity;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import test.buzanov.accountmanager.enumurated.TransactionType;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+
+/**
+ * Сущность Transaction (операция по счету)
+ * @author Aleksey Buzanov
+ */
 
 @Entity
 @Data

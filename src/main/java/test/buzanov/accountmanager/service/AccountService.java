@@ -5,7 +5,6 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import test.buzanov.accountmanager.dto.AccountDto;
-import test.buzanov.accountmanager.dto.converter.AccountDtoConverter;
 import test.buzanov.accountmanager.dto.converter.IAccountDtoConverter;
 import test.buzanov.accountmanager.entity.Account;
 import test.buzanov.accountmanager.repository.AccountRepository;
@@ -13,6 +12,11 @@ import test.buzanov.accountmanager.repository.TransactionRepository;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
+
+/**
+ * Класс реализует бизнесс логику и валидацию данных для сущности Account.
+ * @author Aleksey Buzanov
+ */
 
 @Component
 public class AccountService implements IAccountService {

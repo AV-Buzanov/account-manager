@@ -1,6 +1,9 @@
 package test.buzanov.accountmanager.entity;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.CascadeType;
@@ -11,6 +14,11 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.HashSet;
 import java.util.Set;
+
+/**
+ * Сущность Account (денежный счет)
+ * @author Aleksey Buzanov
+ */
 
 @Entity
 @Data

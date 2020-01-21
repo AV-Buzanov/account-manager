@@ -1,16 +1,19 @@
 package test.buzanov.accountmanager.controller;
 
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import test.buzanov.accountmanager.dto.TransactionDto;
 import test.buzanov.accountmanager.service.ITransactionService;
-import test.buzanov.accountmanager.service.TransactionService;
 
 import java.util.Collection;
+
+/**
+ * Класс публикует REST сервис для управления сущностью Transaction.
+ * @author Aleksey Buzanov
+ */
 
 @RestController
 @RequestMapping(value = "/transaction")
@@ -18,8 +21,7 @@ public class TransactionRestController {
     @NotNull
     private final ITransactionService transactionService;
 
-    public TransactionRestController(@NotNull @Qualifier(value = "transactionService")
-                                     final ITransactionService transactionService) {
+    public TransactionRestController(@NotNull @Qualifier(value = "transactionService") final ITransactionService transactionService) {
         this.transactionService = transactionService;
     }
 

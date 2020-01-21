@@ -9,14 +9,18 @@ import test.buzanov.accountmanager.service.IAccountService;
 
 import java.util.Collection;
 
+/**
+ * Класс публикует REST сервис для управления сущностью Account.
+ * @author Aleksey Buzanov
+ */
+
 @RestController
 @RequestMapping(value = "/account")
 public class AccountRestController {
 
     private final IAccountService accountService;
 
-    public AccountRestController(@Qualifier(value = "accountService")
-                                 final IAccountService accountService) {
+    public AccountRestController(@Qualifier(value = "accountService") final IAccountService accountService) {
         this.accountService = accountService;
     }
 

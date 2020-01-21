@@ -10,6 +10,11 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
 
+/**
+ * Абстрактная сущность.
+ * @author Aleksey Buzanov
+ */
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

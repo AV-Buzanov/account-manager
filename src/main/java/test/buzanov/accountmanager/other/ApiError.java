@@ -7,6 +7,11 @@ import org.springframework.http.HttpStatus;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Объект для удобного представления возникающих на сервере исключений для клиента.
+ * @author Aleksey Buzanov
+ */
+
 @Getter
 @Setter
 public class ApiError {

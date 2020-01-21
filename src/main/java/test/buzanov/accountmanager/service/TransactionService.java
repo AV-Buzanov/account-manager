@@ -14,6 +14,11 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
+/**
+ * Класс реализует бизнесс логику и валидацию данных для сущности Transaction.
+ * @author Aleksey Buzanov
+ */
+
 @Service
 public class TransactionService implements ITransactionService {
 

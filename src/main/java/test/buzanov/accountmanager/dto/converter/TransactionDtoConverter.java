@@ -11,8 +11,13 @@ import test.buzanov.accountmanager.repository.AccountRepository;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+/**
+ * Класс реализует перевод сущности Transaction в DTO объект и обратно.
+ * @author Aleksey Buzanov
+ */
+
 @Component
-public class TransactionDtoConverter implements ITransactionDtoConverter{
+public class TransactionDtoConverter implements ITransactionDtoConverter {
 
     @Nullable
     public Transaction toTransactionEntity(@Nullable final TransactionDto transactionDto) {

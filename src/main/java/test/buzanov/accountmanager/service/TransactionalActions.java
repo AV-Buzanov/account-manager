@@ -3,7 +3,6 @@ package test.buzanov.accountmanager.service;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import test.buzanov.accountmanager.dto.TransactionDto;
 import test.buzanov.accountmanager.dto.converter.ITransactionDtoConverter;
@@ -13,8 +12,13 @@ import test.buzanov.accountmanager.enumurated.TransactionType;
 import test.buzanov.accountmanager.repository.AccountRepository;
 import test.buzanov.accountmanager.repository.TransactionRepository;
 
+/**
+ * Класс реализует @Transactional методы для сущности Transaction.
+ * @author Aleksey Buzanov
+ */
+
 @Component
-public class TransactionalActions implements ITransactionalActions{
+public class TransactionalActions implements ITransactionalActions {
     @NotNull
     private final TransactionRepository transactionRepository;
 

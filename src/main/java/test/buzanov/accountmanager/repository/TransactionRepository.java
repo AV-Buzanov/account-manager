@@ -1,7 +1,6 @@
 package test.buzanov.accountmanager.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -9,6 +8,11 @@ import test.buzanov.accountmanager.entity.Transaction;
 
 import java.math.BigDecimal;
 import java.util.Collection;
+
+/**
+ * Spring Data JPA репозиторий для сущности Transaction.
+ * @author Aleksey Buzanov
+ */
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, String> {

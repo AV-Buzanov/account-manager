@@ -9,6 +9,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import test.buzanov.accountmanager.other.ApiError;
+
+/**
+ * Класс перехватывает исключения, логирует на сервере и передает клиенту в удобном виде.
+ * @author Aleksey Buzanov
+ */
+
 @Slf4j
 @ControllerAdvice
 public class CustomExceptionController extends ResponseEntityExceptionHandler {
