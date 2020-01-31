@@ -9,35 +9,41 @@ import org.jetbrains.annotations.Nullable;
 import test.buzanov.accountmanager.enumurated.TransactionType;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * Сущность Transaction (операция по счету)
+ * Сущность Category (категория операции)
+ *
  * @author Aleksey Buzanov
  */
 
 @Entity
 @Data
-@Table(name = "app_transaction")
+@Table(name = "app_category")
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true, exclude = "account")
-public class Transaction extends AbstractEntity {
+@EqualsAndHashCode(callSuper = true, exclude = "parent")
+public class Category extends AbstractEntity {
 
     @Nullable
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "account_id")
-    private Account account;
+    private String name;
 
     @Nullable
     private String description;
 
     @Nullable
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
-    private Category category;
+    @JoinColumn(name = "parent_id")
+    private Category parent;
 
-    private BigDecimal sum;
+    @NotNull
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    private Set<Transaction> transactions = new HashSet<>();
+
+    @NotNull
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+    private Set<Category> childs = new HashSet<>();
 
     @NotNull
     @Enumerated(value = EnumType.STRING)
