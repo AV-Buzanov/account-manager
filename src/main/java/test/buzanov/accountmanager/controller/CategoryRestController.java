@@ -26,11 +26,12 @@ public class CategoryRestController {
     }
 
     @GetMapping("/findAll")
-    public ResponseEntity<Collection<CategoryDto>> findAll() {
-        return ResponseEntity.ok(categoryService.findAll());
+    public ResponseEntity<Collection<CategoryDto>> findAll(@RequestHeader("page") final int page,
+                                                           @RequestHeader("size") final int size) {
+        return ResponseEntity.ok(categoryService.findAll(page, size));
     }
 
-    @GetMapping("/findAll/{parentId}")
+    @GetMapping("/findByParent/{parentId}")
     public ResponseEntity<Collection<CategoryDto>> findAllChilds(@PathVariable final String parentId) {
         return ResponseEntity.ok(categoryService.findAllChilds(parentId));
     }

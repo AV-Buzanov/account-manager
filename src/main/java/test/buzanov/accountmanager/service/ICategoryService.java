@@ -12,7 +12,7 @@ import java.util.Collection;
  */
 
 public interface ICategoryService {
-    Collection<CategoryDto> findAll();
+    Collection<CategoryDto> findAll(int page, int size);
 
     Collection<CategoryDto> findAllChilds(String parentId);
 

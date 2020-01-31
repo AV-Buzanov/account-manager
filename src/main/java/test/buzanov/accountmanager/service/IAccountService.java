@@ -11,7 +11,7 @@ import java.util.Collection;
  */
 
 public interface IAccountService {
-    Collection<AccountDto> findAll();
+    Collection<AccountDto> findAll(int page, int size);
 
     AccountDto findOne(@Nullable final String id) throws Exception;
 

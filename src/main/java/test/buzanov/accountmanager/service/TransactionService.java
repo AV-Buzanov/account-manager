@@ -2,6 +2,8 @@ package test.buzanov.accountmanager.service;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import test.buzanov.accountmanager.dto.TransactionDto;
 import test.buzanov.accountmanager.dto.converter.ITransactionDtoConverter;
@@ -45,26 +47,28 @@ public class TransactionService implements ITransactionService {
     }
 
     @NotNull
-    public Collection<TransactionDto> findAll() {
-        return transactionRepository.findAll()
+    public Collection<TransactionDto> findAll(int page, int size) {
+        return transactionRepository.findAll(PageRequest.of(page, size))
                 .stream()
                 .map(transactionDtoConverter::toTransactionDTO)
                 .collect(Collectors.toList());
     }
 
     @NotNull
-    public Collection<TransactionDto> findAllByAccount(@Nullable final String id) throws Exception {
+    public Collection<TransactionDto> findAllByAccount(@Nullable final String id,
+                                                       int page, int size) throws Exception {
         if (id == null || id.isEmpty()) throw new Exception("Id can't by empty or null");
-        return transactionRepository.findAllByAccountId(id)
+        return transactionRepository.findAllByAccountId(id, PageRequest.of(page, size))
                 .stream()
                 .map(transactionDtoConverter::toTransactionDTO)
                 .collect(Collectors.toList());
     }
 
     @NotNull
-    public Collection<TransactionDto> findAllByCategory(@Nullable final String id) throws Exception {
+    public Collection<TransactionDto> findAllByCategory(@Nullable final String id,
+                                                        int page, int size) throws Exception {
         if (id == null || id.isEmpty()) throw new Exception("Id can't by empty or null");
-        return transactionRepository.findAllByCategoryId(id)
+        return transactionRepository.findAllByCategoryId(id, PageRequest.of(page, size))
                 .stream()
                 .map(transactionDtoConverter::toTransactionDTO)
                 .collect(Collectors.toList());

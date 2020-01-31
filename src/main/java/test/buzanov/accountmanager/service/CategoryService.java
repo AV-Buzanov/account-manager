@@ -2,6 +2,8 @@ package test.buzanov.accountmanager.service;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import test.buzanov.accountmanager.dto.CategoryDto;
@@ -39,18 +41,23 @@ public class CategoryService implements ICategoryService {
         this.categoryDtoConverter = categoryDtoConverter;
     }
 
-    public Collection<CategoryDto> findAll() {
-        return categoryRepository.findAll().stream().map(categoryDtoConverter::toCategoryDTO).collect(Collectors.toList());
+    public Collection<CategoryDto> findAll(final int page, final int size) {
+        return categoryRepository.findAll(PageRequest.of(page, size)).stream()
+                .map(categoryDtoConverter::toCategoryDTO)
+                .collect(Collectors.toList());
     }
 
     public Collection<CategoryDto> findAllChilds(final String parentId) {
-        return categoryRepository.findAllByParentId(parentId).stream().map(categoryDtoConverter::toCategoryDTO).collect(Collectors.toList());
+        return categoryRepository.findAllByParentId(parentId).stream()
+                .map(categoryDtoConverter::toCategoryDTO)
+                .collect(Collectors.toList());
     }
 
     @Nullable
     public CategoryDto findOne(@Nullable final String id) throws Exception {
         if (id == null || id.isEmpty()) throw new Exception("Id can't by empty or null");
-        @Nullable final CategoryDto categoryDto = categoryDtoConverter.toCategoryDTO(categoryRepository.findById(id).orElse(null));
+        @Nullable final CategoryDto categoryDto = categoryDtoConverter
+                .toCategoryDTO(categoryRepository.findById(id).orElse(null));
         return categoryDto;
     }
 
@@ -63,7 +70,8 @@ public class CategoryService implements ICategoryService {
             throw new Exception("Category already exists");
         final Category account = categoryDtoConverter.toCategoryEntity(accountDto);
         if (accountDto.getParentId() != null)
-            account.setParent(categoryRepository.findById(accountDto.getParentId()).orElse(null));
+            account.setParent(categoryRepository
+                    .findById(accountDto.getParentId()).orElse(null));
         return categoryDtoConverter.toCategoryDTO(categoryRepository.saveAndFlush(account));
     }
 

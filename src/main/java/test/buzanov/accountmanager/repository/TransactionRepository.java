@@ -1,5 +1,6 @@
 package test.buzanov.accountmanager.repository;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -8,6 +9,7 @@ import test.buzanov.accountmanager.entity.Transaction;
 
 import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Spring Data JPA репозиторий для сущности Transaction.
@@ -16,9 +18,9 @@ import java.util.Collection;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, String> {
-    Collection<Transaction> findAllByAccountId(String id);
+    List<Transaction> findAllByAccountId(String accountId, Pageable pageable);
 
-    Collection<Transaction> findAllByCategoryId(String id);
+    List<Transaction> findAllByCategoryId(String categoryId, Pageable pageable);
 
     @Query(value = "select sum(t.sum) from Transaction t where t.account.id=:id and t.transactionType='DEPOSIT'")
     BigDecimal getDepositOperationsSum(@Param("id") String id);

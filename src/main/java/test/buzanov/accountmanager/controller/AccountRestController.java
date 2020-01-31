@@ -25,8 +25,9 @@ public class AccountRestController {
     }
 
     @GetMapping("/findAll")
-    public ResponseEntity<Collection<AccountDto>> findAll() {
-        return ResponseEntity.ok(accountService.findAll());
+    public ResponseEntity<Collection<AccountDto>> findAll(@RequestHeader("page") final int page,
+                                                          @RequestHeader("size") final int size) {
+        return ResponseEntity.ok(accountService.findAll(page, size));
     }
 
     @GetMapping("/find/{id}")

@@ -2,6 +2,8 @@ package test.buzanov.accountmanager.service;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import test.buzanov.accountmanager.dto.AccountDto;
@@ -10,6 +12,7 @@ import test.buzanov.accountmanager.entity.Account;
 import test.buzanov.accountmanager.repository.AccountRepository;
 import test.buzanov.accountmanager.repository.TransactionRepository;
 
+import java.awt.print.Pageable;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -38,14 +41,18 @@ public class AccountService implements IAccountService {
         this.accountDtoConverter = accountDtoConverter;
     }
 
-    public Collection<AccountDto> findAll() {
-        return accountRepository.findAll().stream().map(accountDtoConverter::toAccountDTO).collect(Collectors.toList());
+    public Collection<AccountDto> findAll(int page, int size) {
+        return accountRepository.findAll(PageRequest.of(page,size)).stream()
+                .map(accountDtoConverter::toAccountDTO)
+                .collect(Collectors.toList());
     }
 
     @Nullable
     public AccountDto findOne(@Nullable final String id) throws Exception {
         if (id == null || id.isEmpty()) throw new Exception("Id can't by empty or null");
-        @Nullable final AccountDto accountDto = accountDtoConverter.toAccountDTO(accountRepository.findById(id).orElse(null));
+        @Nullable final AccountDto accountDto = accountDtoConverter
+                .toAccountDTO(accountRepository.findById(id)
+                        .orElse(null));
         return accountDto;
     }
 

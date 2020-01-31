@@ -11,11 +11,11 @@ import java.util.Collection;
 
 public interface ITransactionService {
 
-    Collection<TransactionDto> findAll();
+    Collection<TransactionDto> findAll(int page, int size);
 
-    Collection<TransactionDto> findAllByAccount(final String id) throws Exception;
+    Collection<TransactionDto> findAllByAccount(final String id, int page, int size) throws Exception;
 
-    Collection<TransactionDto> findAllByCategory(final String id) throws Exception;
+    Collection<TransactionDto> findAllByCategory(final String id, int page, int size) throws Exception;
 
     TransactionDto findOne(final String id) throws Exception;
 
