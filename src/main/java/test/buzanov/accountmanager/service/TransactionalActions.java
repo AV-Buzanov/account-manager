@@ -7,9 +7,11 @@ import org.springframework.transaction.annotation.Transactional;
 import test.buzanov.accountmanager.dto.TransactionDto;
 import test.buzanov.accountmanager.dto.converter.ITransactionDtoConverter;
 import test.buzanov.accountmanager.entity.Account;
+import test.buzanov.accountmanager.entity.Category;
 import test.buzanov.accountmanager.entity.Transaction;
 import test.buzanov.accountmanager.enumurated.TransactionType;
 import test.buzanov.accountmanager.repository.AccountRepository;
+import test.buzanov.accountmanager.repository.CategoryRepository;
 import test.buzanov.accountmanager.repository.TransactionRepository;
 
 /**
@@ -26,13 +28,18 @@ public class TransactionalActions implements ITransactionalActions {
     private final AccountRepository accountRepository;
 
     @NotNull
+    private final CategoryRepository categoryRepository;
+
+    @NotNull
     private final ITransactionDtoConverter transactionDtoConverter;
 
     public TransactionalActions(@NotNull final TransactionRepository transactionRepository,
                                 @NotNull final AccountRepository accountRepository,
+                                @NotNull final CategoryRepository categoryRepository,
                                 @NotNull final ITransactionDtoConverter transactionDtoConverter) {
         this.transactionRepository = transactionRepository;
         this.accountRepository = accountRepository;
+        this.categoryRepository = categoryRepository;
         this.transactionDtoConverter = transactionDtoConverter;
     }
 
@@ -44,6 +51,10 @@ public class TransactionalActions implements ITransactionalActions {
         final Account account = accountRepository.findById(transactionDto.getAccountId()).orElse(null);
         if (account == null)
             throw new Exception("Account not found");
+        final Category category = categoryRepository.findById(transactionDto.getCategoryId()).orElse(null);
+        if (category == null)
+            throw new Exception("Category not found");
+
         if (transactionDto.getTransactionType().equals(TransactionType.WITHDRAW)) {
             if (transactionDto.getSum().compareTo(account.getBalance()) > 0)
                 throw new Exception("Insufficient funds in the account");
@@ -51,6 +62,7 @@ public class TransactionalActions implements ITransactionalActions {
         } else if (transactionDto.getTransactionType().equals(TransactionType.DEPOSIT))
             account.addBalance(transactionDto.getSum());
         transaction.setAccount(account);
+        transaction.setCategory(category);
         return transactionRepository.saveAndFlush(transaction);
     }
 

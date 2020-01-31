@@ -61,6 +61,15 @@ public class TransactionService implements ITransactionService {
                 .collect(Collectors.toList());
     }
 
+    @NotNull
+    public Collection<TransactionDto> findAllByCategory(@Nullable final String id) throws Exception {
+        if (id == null || id.isEmpty()) throw new Exception("Id can't by empty or null");
+        return transactionRepository.findAllByCategoryId(id)
+                .stream()
+                .map(transactionDtoConverter::toTransactionDTO)
+                .collect(Collectors.toList());
+    }
+
     @Nullable
     public TransactionDto findOne(@Nullable final String id) throws Exception {
         if (id == null || id.isEmpty()) throw new Exception("Id can't by empty or null");

@@ -18,9 +18,13 @@ import java.util.Collection;
 public interface TransactionRepository extends JpaRepository<Transaction, String> {
     Collection<Transaction> findAllByAccountId(String id);
 
+    Collection<Transaction> findAllByCategoryId(String id);
+
     @Query(value = "select sum(t.sum) from Transaction t where t.account.id=:id and t.transactionType='DEPOSIT'")
     BigDecimal getDepositOperationsSum(@Param("id") String id);
 
     @Query(value = "select sum(t.sum) from Transaction t where t.account.id=:id and t.transactionType='WITHDRAW'")
     BigDecimal getWithdrawOperationsSum(@Param("id") String id);
+
+
 }

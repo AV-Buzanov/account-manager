@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 /**
- * Класс реализует бизнесс логику и валидацию данных для сущности Account.
+ * Класс реализует бизнесс логику и валидацию данных для сущности Category.
  *
  * @author Aleksey Buzanov
  */

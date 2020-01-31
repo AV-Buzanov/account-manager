@@ -25,9 +25,14 @@ public class TransactionRestController {
         this.transactionService = transactionService;
     }
 
-    @GetMapping("/findAll/{id}")
-    public ResponseEntity<Collection<TransactionDto>> findAll(@PathVariable final String id) throws Exception {
+    @GetMapping("/findByAccount/{id}")
+    public ResponseEntity<Collection<TransactionDto>> findAllByAccount(@PathVariable final String id) throws Exception {
         return ResponseEntity.ok(transactionService.findAllByAccount(id));
+    }
+
+    @GetMapping("/findByCategory/{id}")
+    public ResponseEntity<Collection<TransactionDto>> findAllByCategory(@PathVariable final String id) throws Exception {
+        return ResponseEntity.ok(transactionService.findAllByCategory(id));
     }
 
     @GetMapping("/find/{id}")

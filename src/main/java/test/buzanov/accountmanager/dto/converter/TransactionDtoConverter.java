@@ -40,6 +40,8 @@ public class TransactionDtoConverter implements ITransactionDtoConverter {
         transactionDto.setCreation(transaction.getCreation());
         if (transaction.getAccount() != null)
             transactionDto.setAccountId(transaction.getAccount().getId());
+        if (transaction.getCategory() != null)
+            transactionDto.setCategoryId(transaction.getCategory().getId());
         transactionDto.setDescription(transaction.getDescription());
         transactionDto.setTransactionType(transaction.getTransactionType());
         return transactionDto;

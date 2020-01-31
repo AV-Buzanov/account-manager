@@ -7,7 +7,7 @@ import test.buzanov.accountmanager.entity.Category;
 import java.util.Collection;
 
 /**
- * Spring Data JPA репозиторий для сущности Account.
+ * Spring Data JPA репозиторий для сущности Category.
  *
  * @author Aleksey Buzanov
  */

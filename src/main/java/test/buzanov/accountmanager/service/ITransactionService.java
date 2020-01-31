@@ -15,6 +15,8 @@ public interface ITransactionService {
 
     Collection<TransactionDto> findAllByAccount(final String id) throws Exception;
 
+    Collection<TransactionDto> findAllByCategory(final String id) throws Exception;
+
     TransactionDto findOne(final String id) throws Exception;
 
     TransactionDto create(final TransactionDto transactionDto) throws Exception;

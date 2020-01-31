@@ -25,6 +25,9 @@ public class TransactionDto {
     private String accountId;
 
     @Nullable
+    private String categoryId;
+
+    @Nullable
     private String description;
 
     @Nullable
