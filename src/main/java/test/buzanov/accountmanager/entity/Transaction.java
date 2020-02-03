@@ -10,6 +10,7 @@ import test.buzanov.accountmanager.enumurated.TransactionType;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
  * Сущность Transaction (операция по счету)
@@ -31,6 +32,9 @@ public class Transaction extends AbstractEntity {
 
     @Nullable
     private String description;
+
+    @Nullable
+    private LocalDateTime date;
 
     @Nullable
     @ManyToOne(fetch = FetchType.LAZY)

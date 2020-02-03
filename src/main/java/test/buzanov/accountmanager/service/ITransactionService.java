@@ -1,7 +1,9 @@
 package test.buzanov.accountmanager.service;
 
 import test.buzanov.accountmanager.dto.TransactionDto;
+import test.buzanov.accountmanager.enumurated.TransactionType;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 
 /**
@@ -16,6 +18,8 @@ public interface ITransactionService {
     Collection<TransactionDto> findAllByAccount(final String id, int page, int size) throws Exception;
 
     Collection<TransactionDto> findAllByCategory(final String id, int page, int size) throws Exception;
+
+    BigDecimal sumByType(TransactionType transactionType);
 
     TransactionDto findOne(final String id) throws Exception;
 

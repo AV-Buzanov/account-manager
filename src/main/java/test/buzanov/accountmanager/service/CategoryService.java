@@ -2,7 +2,6 @@ package test.buzanov.accountmanager.service;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,6 +48,12 @@ public class CategoryService implements ICategoryService {
 
     public Collection<CategoryDto> findAllChilds(final String parentId) {
         return categoryRepository.findAllByParentId(parentId).stream()
+                .map(categoryDtoConverter::toCategoryDTO)
+                .collect(Collectors.toList());
+    }
+
+    public Collection<CategoryDto> findAllRoots() {
+        return categoryRepository.findAllByParentId(null).stream()
                 .map(categoryDtoConverter::toCategoryDTO)
                 .collect(Collectors.toList());
     }

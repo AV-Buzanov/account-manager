@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import test.buzanov.accountmanager.enumurated.TransactionType;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
 
@@ -26,6 +27,9 @@ public class TransactionDto {
 
     @Nullable
     private String categoryId;
+
+    @Nullable
+    private LocalDateTime date;
 
     @Nullable
     private String description;

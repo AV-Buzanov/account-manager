@@ -16,6 +16,8 @@ public interface ICategoryService {
 
     Collection<CategoryDto> findAllChilds(String parentId);
 
+    Collection<CategoryDto> findAllRoots();
+
     CategoryDto findOne(@Nullable final String id) throws Exception;
 
     CategoryDto create(@Nullable final CategoryDto accountDto) throws Exception;

@@ -10,7 +10,7 @@ import test.buzanov.accountmanager.entity.Category;
  */
 
 public interface ICategoryDtoConverter {
-    Category toCategoryEntity(final CategoryDto categorytDto);
+    Category toCategoryEntity(final CategoryDto categoryDto);
 
     CategoryDto toCategoryDTO(final Category category);
 }

@@ -36,6 +36,11 @@ public class CategoryRestController {
         return ResponseEntity.ok(categoryService.findAllChilds(parentId));
     }
 
+    @GetMapping("/findAllRoots")
+    public ResponseEntity<Collection<CategoryDto>> findAllRoots() {
+        return ResponseEntity.ok(categoryService.findAllRoots());
+    }
+
     @GetMapping("/find/{id}")
     public ResponseEntity<CategoryDto> findOne(@PathVariable final String id) throws Exception {
         final CategoryDto categoryDto = categoryService.findOne(id);
