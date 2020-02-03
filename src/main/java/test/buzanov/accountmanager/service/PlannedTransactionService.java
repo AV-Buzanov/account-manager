@@ -6,9 +6,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import test.buzanov.accountmanager.dto.PlannedTransactionDto;
 import test.buzanov.accountmanager.dto.converter.IPlannedTransactionDtoConverter;
+import test.buzanov.accountmanager.entity.PlannedTransaction;
+import test.buzanov.accountmanager.enumurated.TransactionType;
+import test.buzanov.accountmanager.repository.AccountRepository;
+import test.buzanov.accountmanager.repository.CategoryRepository;
 import test.buzanov.accountmanager.repository.PlannedTransactionRepository;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -27,10 +32,18 @@ public class PlannedTransactionService implements IPlannedTransactionService {
     @NotNull
     private final IPlannedTransactionDtoConverter plannedTransactionDtoConverter;
 
+    @NotNull
+    private final AccountRepository accountRepository;
+
+    @NotNull
+    private final CategoryRepository categoryRepository;
+
     public PlannedTransactionService(@NotNull final PlannedTransactionRepository plannedTransactionRepository,
-                                     @NotNull final IPlannedTransactionDtoConverter plannedTransactionDtoConverter) {
+                                     @NotNull final IPlannedTransactionDtoConverter plannedTransactionDtoConverter, @NotNull AccountRepository accountRepository, @NotNull CategoryRepository categoryRepository) {
         this.plannedTransactionRepository = plannedTransactionRepository;
         this.plannedTransactionDtoConverter = plannedTransactionDtoConverter;
+        this.accountRepository = accountRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     @NotNull
@@ -39,6 +52,12 @@ public class PlannedTransactionService implements IPlannedTransactionService {
                 .stream()
                 .map(plannedTransactionDtoConverter::toTransactionDTO)
                 .collect(Collectors.toList());
+    }
+
+    @NotNull
+    public BigDecimal getPlannedSumOnDate(@Nullable final String id, LocalDate localDate) {
+        return plannedTransactionRepository.getSum(id, TransactionType.DEPOSIT, LocalDate.now(), localDate).orElse(BigDecimal.ZERO).subtract(
+                plannedTransactionRepository.getSum(id, TransactionType.WITHDRAW, LocalDate.now(), localDate).orElse(BigDecimal.ZERO));
     }
 
     @NotNull
@@ -77,10 +96,12 @@ public class PlannedTransactionService implements IPlannedTransactionService {
             throw new Exception("Sum can't be null, negative or 0");
         if (plannedTransactionRepository.existsById(transactionDto.getId()))
             throw new Exception("Transaction id already exists");
+        PlannedTransaction plannedTransaction = plannedTransactionDtoConverter.toTransactionEntity(transactionDto);
+        plannedTransaction.setAccount(accountRepository.findById(transactionDto.getAccountId()).orElse(null));
+        plannedTransaction.setCategory(categoryRepository.findById(transactionDto.getCategoryId()).orElse(null));
 
         return plannedTransactionDtoConverter.toTransactionDTO(
-                plannedTransactionRepository.saveAndFlush(
-                        plannedTransactionDtoConverter.toTransactionEntity(transactionDto)));
+                plannedTransactionRepository.saveAndFlush(plannedTransaction));
 
     }
 

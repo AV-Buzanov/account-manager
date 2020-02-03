@@ -6,9 +6,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import test.buzanov.accountmanager.entity.PlannedTransaction;
+import test.buzanov.accountmanager.enumurated.TransactionType;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Spring Data JPA репозиторий для сущности PlannedTransaction.
@@ -22,11 +26,7 @@ public interface PlannedTransactionRepository extends JpaRepository<PlannedTrans
 
     List<PlannedTransaction> findAllByCategoryId(String categoryId, Pageable pageable);
 
-    @Query(value = "select sum(t.sum) from PlannedTransaction t where t.account.id=:id and t.transactionType='DEPOSIT'")
-    BigDecimal getDepositOperationsSum(@Param("id") String id);
-
-    @Query(value = "select sum(t.sum) from PlannedTransaction t where t.account.id=:id and t.transactionType='WITHDRAW'")
-    BigDecimal getWithdrawOperationsSum(@Param("id") String id);
-
+    @Query(value = "select sum(t.sum) from PlannedTransaction t where t.account.id=:id and t.transactionType=:type and t.date>:date1 and t.date<:date2")
+    Optional<BigDecimal> getSum(@Param("id") String id, @Param("type") TransactionType type, @Param("date1") LocalDate date1, @Param("date2") LocalDate date2);
 
 }

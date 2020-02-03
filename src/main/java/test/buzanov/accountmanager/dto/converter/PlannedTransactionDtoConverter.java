@@ -28,6 +28,7 @@ public class PlannedTransactionDtoConverter implements IPlannedTransactionDtoCon
         plannedTransaction.setTransactionType(plannedTransactionDto.getTransactionType());
         plannedTransaction.setFrequency(plannedTransactionDto.getFrequency());
         plannedTransaction.setAuto(plannedTransactionDto.isAuto());
+        plannedTransaction.setDate(plannedTransactionDto.getDate());
         return plannedTransaction;
     }
 
@@ -46,6 +47,7 @@ public class PlannedTransactionDtoConverter implements IPlannedTransactionDtoCon
         plannedTransactionDto.setTransactionType(plannedTransaction.getTransactionType());
         plannedTransactionDto.setFrequency(plannedTransaction.getFrequency());
         plannedTransactionDto.setAuto(plannedTransaction.isAuto());
+        plannedTransactionDto.setDate(plannedTransaction.getDate());
         return plannedTransactionDto;
     }
 }

@@ -1,7 +1,10 @@
 package test.buzanov.accountmanager.service;
 
+import org.jetbrains.annotations.Nullable;
 import test.buzanov.accountmanager.dto.PlannedTransactionDto;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Collection;
 
 /**
@@ -21,6 +24,8 @@ public interface IPlannedTransactionService {
     PlannedTransactionDto findOne(final String id) throws Exception;
 
     PlannedTransactionDto create(final PlannedTransactionDto transactionDto) throws Exception;
+
+    BigDecimal getPlannedSumOnDate(@Nullable final String id, LocalDate localDate);
 
     void delete(String id) throws Exception;
 }

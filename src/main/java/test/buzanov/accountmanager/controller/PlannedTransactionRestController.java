@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.*;
 import test.buzanov.accountmanager.dto.PlannedTransactionDto;
 import test.buzanov.accountmanager.service.IPlannedTransactionService;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 /**
@@ -46,6 +49,11 @@ public class PlannedTransactionRestController {
         if (transactionDto == null)
             return ResponseEntity.noContent().build();
         return ResponseEntity.ok(transactionDto);
+    }
+
+    @GetMapping("/sumOnDate/{id}")
+    public ResponseEntity<BigDecimal> plannedSumOnDate(@PathVariable final String id, @RequestHeader("date") String date) throws Exception {
+        return ResponseEntity.ok(plannedTransactionService.getPlannedSumOnDate(id, LocalDate.parse(date)));
     }
 
     @PutMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE)
