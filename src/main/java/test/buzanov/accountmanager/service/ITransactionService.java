@@ -19,8 +19,6 @@ public interface ITransactionService {
 
     Collection<TransactionDto> findAllByCategory(final String id, int page, int size) throws Exception;
 
-    BigDecimal sumByType(TransactionType transactionType);
-
     TransactionDto findOne(final String id) throws Exception;
 
     TransactionDto create(final TransactionDto transactionDto) throws Exception;

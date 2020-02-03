@@ -13,17 +13,18 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
- * Сущность Transaction (операция по счету)
+ * Сущность PlannedTransaction (запланированная операция по счету)
+ *
  * @author Aleksey Buzanov
  */
 
 @Entity
 @Data
-@Table(name = "app_transaction")
+@Table(name = "app_planned_transaction")
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true, exclude = {"account", "category"})
-public class Transaction extends AbstractEntity {
+public class PlannedTransaction extends AbstractEntity {
 
     @Nullable
     @ManyToOne(fetch = FetchType.LAZY)
@@ -46,4 +47,16 @@ public class Transaction extends AbstractEntity {
     @NotNull
     @Enumerated(value = EnumType.STRING)
     private TransactionType transactionType;
+
+    @Enumerated(value = EnumType.STRING)
+    private Frequency frequency;
+
+    private boolean auto;
+
+    public enum Frequency {
+        ONCE,
+        EVERYDAY,
+        EVERYWEEK,
+        EVERYMONTH
+    }
 }
