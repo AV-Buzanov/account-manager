@@ -31,15 +31,15 @@ public class PlannedTransactionRestController {
 
     @GetMapping("/findByAccount/{id}")
     public ResponseEntity<Collection<PlannedTransactionDto>> findAllByAccount(@PathVariable final String id,
-                                                                              @RequestHeader("page") int page,
-                                                                              @RequestHeader("size") int size) throws Exception {
+                                                                              @RequestParam(value = "page", defaultValue = "0") final int page,
+                                                                              @RequestParam(value = "size", defaultValue = "100") final int size) throws Exception {
         return ResponseEntity.ok(plannedTransactionService.findAllByAccount(id, page, size));
     }
 
     @GetMapping("/findByCategory/{id}")
     public ResponseEntity<Collection<PlannedTransactionDto>> findAllByCategory(@PathVariable final String id,
-                                                                               @RequestHeader("page") int page,
-                                                                               @RequestHeader("size") int size) throws Exception {
+                                                                               @RequestParam(value = "page", defaultValue = "0") final int page,
+                                                                               @RequestParam(value = "size", defaultValue = "100") final int size) throws Exception {
         return ResponseEntity.ok(plannedTransactionService.findAllByCategory(id, page, size));
     }
 

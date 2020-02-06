@@ -26,8 +26,8 @@ public class CategoryRestController {
     }
 
     @GetMapping("/findAll")
-    public ResponseEntity<Collection<CategoryDto>> findAll(@RequestHeader("page") final int page,
-                                                           @RequestHeader("size") final int size) {
+    public ResponseEntity<Collection<CategoryDto>> findAll(@RequestParam(value = "page", defaultValue = "0") final int page,
+                                                           @RequestParam(value = "size", defaultValue = "100") final int size) {
         return ResponseEntity.ok(categoryService.findAll(page, size));
     }
 
