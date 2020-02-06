@@ -8,9 +8,9 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         hbm2ddl.auto: update
   datasource:
-    url: jdbc:postgresql://localhost:5432/mm?useUnicode=true&serverTimezone=Europe/Moscow&useSSL=false
-    username: postgres
-    password:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/mm?useUnicode=true&serverTimezone=Europe/Moscow&useSSL=false}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:}
     driverClassName: org.postgresql.Driver
   mvc:
     servlet:
