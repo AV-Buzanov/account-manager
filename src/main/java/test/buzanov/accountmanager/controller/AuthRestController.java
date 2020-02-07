@@ -53,7 +53,7 @@ public class AuthRestController {
         return ResponseEntity.ok("Authorize success "+user.getUsername());
     }
 
-    @GetMapping("/login")
+    @PostMapping("/login")
     public ResponseEntity<Token> login(@RequestBody UserDto userDto) throws Exception {
         return ResponseEntity.ok(tokenService.login(userDto));
     }

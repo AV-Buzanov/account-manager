@@ -1,5 +1,6 @@
 package test.buzanov.accountmanager.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -37,9 +38,19 @@ public class User extends AbstractEntity implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Set<Role> authorities;
 
-    @NotNull
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private Set<Token> tokens = new HashSet<>();
+//    @NotNull
+//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+//    private Set<Token> tokens = new HashSet<>();
+
+    @JsonIgnore
+    @Transient
+    private boolean isAccountNonExpired;
+    @JsonIgnore
+    @Transient
+    private boolean isAccountNonLocked;
+    @JsonIgnore
+    @Transient
+    private boolean isCredentialsNonExpired;
 
     @Override
     public boolean isAccountNonExpired() {

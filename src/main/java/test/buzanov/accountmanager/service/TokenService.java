@@ -42,7 +42,7 @@ public class TokenService implements ITokenService {
         }
         Token token = new Token();
         token.setValue(RandomStringUtils.random(10, true, true));
-        token.setUser(user);
+//        token.setUser(user);
 
         return tokenRepository.saveAndFlush(token);
     }

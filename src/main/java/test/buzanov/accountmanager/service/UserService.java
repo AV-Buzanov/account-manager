@@ -37,7 +37,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public User findByUsername(@Nullable String username) throws Exception {
+    public User findByUsername(@Nullable String username) {
         return userRepository.findByUsername(username).orElse(null);
     }
 

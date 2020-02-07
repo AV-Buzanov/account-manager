@@ -15,7 +15,7 @@ public interface IUserService {
 
     User findOne(@Nullable final String id) throws Exception;
 
-    User findByUsername(@Nullable final String username) throws Exception;
+    User findByUsername(@Nullable final String username);
 
     User create(@Nullable final User accountDto) throws Exception;
 
