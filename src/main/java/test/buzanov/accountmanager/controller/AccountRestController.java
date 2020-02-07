@@ -15,7 +15,7 @@ import java.util.Collection;
  */
 
 @RestController
-@RequestMapping(value = "/account")
+@RequestMapping(value = "/accounts")
 public class AccountRestController {
 
     private final IAccountService accountService;
@@ -24,13 +24,14 @@ public class AccountRestController {
         this.accountService = accountService;
     }
 
-    @GetMapping("/findAll")
+
+    @GetMapping("/")
     public ResponseEntity<Collection<AccountDto>> findAll(@RequestParam(value = "page", defaultValue = "0") final int page,
                                                           @RequestParam(value = "size", defaultValue = "100") final int size) {
         return ResponseEntity.ok(accountService.findAll(page, size));
     }
 
-    @GetMapping("/find/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<AccountDto> findOne(@PathVariable final String id) throws Exception {
         final AccountDto accountDto = accountService.findOne(id);
         if (accountDto == null)
@@ -38,7 +39,7 @@ public class AccountRestController {
         return ResponseEntity.ok(accountDto);
     }
 
-    @PutMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AccountDto> create(@RequestBody final AccountDto accountDto) throws Exception {
         final AccountDto createdAccountDto = accountService.create(accountDto);
         if (createdAccountDto == null)
@@ -46,7 +47,7 @@ public class AccountRestController {
         return ResponseEntity.ok(createdAccountDto);
     }
 
-    @PutMapping(value = "/update", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AccountDto> update(@RequestBody final AccountDto accountDto) throws Exception {
         final AccountDto updatedAccountDto = accountService.update(accountDto);
         if (updatedAccountDto == null)
@@ -54,7 +55,7 @@ public class AccountRestController {
         return ResponseEntity.ok(updatedAccountDto);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable final String id) throws Exception {
         accountService.delete(id);
         return ResponseEntity.ok().build();
