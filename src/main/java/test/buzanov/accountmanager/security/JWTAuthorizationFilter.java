@@ -49,7 +49,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
             e.printStackTrace();
         }
         if (user != null)
-            return new UsernamePasswordAuthenticationToken(user.getUsername(),
+            return new UsernamePasswordAuthenticationToken(user,
                     user.getPassword(),
                     user.getAuthorities());
         else return null;

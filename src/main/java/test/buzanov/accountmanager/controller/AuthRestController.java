@@ -2,6 +2,7 @@ package test.buzanov.accountmanager.controller;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -50,7 +51,7 @@ public class AuthRestController {
 
     @GetMapping("/wellcome")
     public ResponseEntity<String> wellcome(@AuthenticationPrincipal User user) {
-        return ResponseEntity.ok("Authorize success "+user.getUsername());
+        return ResponseEntity.ok("Authorize success "+user.getName()+" "+user.getAuthorities().toString());
     }
 
     @PostMapping("/login")
