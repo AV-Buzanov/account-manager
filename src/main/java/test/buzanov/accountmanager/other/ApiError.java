@@ -1,5 +1,6 @@
 package test.buzanov.accountmanager.other;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
@@ -12,8 +13,7 @@ import java.util.List;
  * @author Aleksey Buzanov
  */
 
-@Getter
-@Setter
+@Data
 public class ApiError {
 
     private HttpStatus status;

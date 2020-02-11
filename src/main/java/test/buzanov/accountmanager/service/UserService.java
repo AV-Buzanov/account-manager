@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import test.buzanov.accountmanager.entity.Category;
 import test.buzanov.accountmanager.entity.User;
 import test.buzanov.accountmanager.repository.UserRepository;
 
@@ -12,6 +13,7 @@ import java.util.Collection;
 
 /**
  * Класс реализует бизнесс логику и валидацию данных для сущности Account.
+ *
  * @author Aleksey Buzanov
  */
 
@@ -27,7 +29,7 @@ public class UserService implements IUserService {
 
 
     public Collection<User> findAll(int page, int size) {
-        return userRepository.findAll(PageRequest.of(page,size)).getContent();
+        return userRepository.findAll(PageRequest.of(page, size)).getContent();
     }
 
     @Nullable
@@ -44,9 +46,14 @@ public class UserService implements IUserService {
     @Nullable
     @Transactional
     public User create(@Nullable final User user) throws Exception {
-        if (user == null || user.getId() == null || user.getId().isEmpty())
+        if (user == null || user.getId() == null || user.getId().isEmpty()
+                || user.getUsername() == null || user.getUsername().isEmpty()
+                || user.getPassword() == null || user.getPassword().isEmpty()
+                || user.getName() == null || user.getName().isEmpty())
             throw new Exception("Argument can't be empty or null");
-        return userRepository.saveAndFlush(user) ;
+        if (userRepository.existsUserByUsername(user.getUsername()))
+            throw new Exception("This username already exists.");
+        return userRepository.saveAndFlush(user);
     }
 
     @Nullable
@@ -54,6 +61,12 @@ public class UserService implements IUserService {
     public User update(@Nullable final User user) throws Exception {
         if (user == null || user.getId() == null || user.getId().isEmpty())
             throw new Exception("Argument can't be empty or null");
+        final User ourUser = userRepository.findById(user.getId()).orElse(null);
+        if (ourUser == null)
+            throw new Exception("User not found.");
+        if (!user.getUsername().equals(ourUser.getUsername())
+                && userRepository.existsUserByUsername(user.getUsername()))
+            throw new Exception("This username already exists.");
         return userRepository.saveAndFlush(user);
     }
 

@@ -20,6 +20,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User extends AbstractEntity implements UserDetails {
+    @Column(unique = true, nullable = false)
 
     private String username;
 
@@ -38,9 +39,10 @@ public class User extends AbstractEntity implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Set<Role> authorities;
 
-//    @NotNull
-//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-//    private Set<Token> tokens = new HashSet<>();
+    @NotNull
+    @ManyToMany(mappedBy = "users", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<Account> accounts = new HashSet<>();
 
     @JsonIgnore
     @Transient

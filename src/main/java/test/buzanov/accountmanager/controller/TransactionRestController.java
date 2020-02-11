@@ -18,7 +18,7 @@ import java.util.Collection;
  */
 
 @RestController
-@RequestMapping(value = "/transaction")
+@RequestMapping(value = "/transactions")
 public class TransactionRestController {
     @NotNull
     private final ITransactionService transactionService;
@@ -27,21 +27,21 @@ public class TransactionRestController {
         this.transactionService = transactionService;
     }
 
-    @GetMapping("/findByAccount/{id}")
+    @GetMapping("/account/{id}")
     public ResponseEntity<Collection<TransactionDto>> findAllByAccount(@PathVariable final String id,
                                                                        @RequestParam(value = "page", defaultValue = "0") final int page,
                                                                        @RequestParam(value = "size", defaultValue = "100") final int size) throws Exception {
         return ResponseEntity.ok(transactionService.findAllByAccount(id, page, size));
     }
 
-    @GetMapping("/findByCategory/{id}")
+    @GetMapping("/category/{id}")
     public ResponseEntity<Collection<TransactionDto>> findAllByCategory(@PathVariable final String id,
                                                                         @RequestParam(value = "page", defaultValue = "0") final int page,
                                                                         @RequestParam(value = "size", defaultValue = "100") final int size) throws Exception {
         return ResponseEntity.ok(transactionService.findAllByCategory(id, page, size));
     }
 
-    @GetMapping("/find/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<TransactionDto> findOne(@PathVariable final String id) throws Exception {
         final TransactionDto transactionDto = transactionService.findOne(id);
         if (transactionDto == null)
@@ -50,7 +50,7 @@ public class TransactionRestController {
     }
 
 
-    @PutMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TransactionDto> create(@RequestBody final TransactionDto transactionDTO) throws Exception {
         final TransactionDto createdTransactionDto = transactionService.create(transactionDTO);
         if (createdTransactionDto == null)

@@ -9,7 +9,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import test.buzanov.accountmanager.entity.User;
-import test.buzanov.accountmanager.service.IUserService;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -30,28 +29,20 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
             chain.doFilter(request, response);
             return;
         }
-
-        UsernamePasswordAuthenticationToken authenticationToken = getAuth(header);
-
+        final UsernamePasswordAuthenticationToken authenticationToken = getAuth(header);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         chain.doFilter(request, response);
-
     }
 
-    private UsernamePasswordAuthenticationToken getAuth(String token) {
+    private UsernamePasswordAuthenticationToken getAuth(final String token) throws JsonProcessingException {
         String myToken = JWT.require(Algorithm.HMAC256("secret"))
                 .build().verify(token.replace("Bearer ", ""))
                 .getSubject();
-        User user = null;
-        try {
-            user = new ObjectMapper().readValue(myToken, User.class);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        if (user != null)
+        final User user = new ObjectMapper().readValue(myToken, User.class);
+        if (user != null) {
             return new UsernamePasswordAuthenticationToken(user,
                     user.getPassword(),
                     user.getAuthorities());
-        else return null;
+        } else return null;
     }
 }

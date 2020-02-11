@@ -16,7 +16,7 @@ import java.util.Collection;
  */
 
 @RestController
-@RequestMapping(value = "/category")
+@RequestMapping(value = "/categories")
 public class CategoryRestController {
 
     private final ICategoryService categoryService;
@@ -25,23 +25,23 @@ public class CategoryRestController {
         this.categoryService = categoryService;
     }
 
-    @GetMapping("/findAll")
+    @GetMapping("/")
     public ResponseEntity<Collection<CategoryDto>> findAll(@RequestParam(value = "page", defaultValue = "0") final int page,
                                                            @RequestParam(value = "size", defaultValue = "100") final int size) {
         return ResponseEntity.ok(categoryService.findAll(page, size));
     }
 
-    @GetMapping("/findByParent/{parentId}")
+    @GetMapping("/parent/{parentId}")
     public ResponseEntity<Collection<CategoryDto>> findAllChilds(@PathVariable final String parentId) {
         return ResponseEntity.ok(categoryService.findAllChilds(parentId));
     }
 
-    @GetMapping("/findAllRoots")
+    @GetMapping("/roots")
     public ResponseEntity<Collection<CategoryDto>> findAllRoots() {
         return ResponseEntity.ok(categoryService.findAllRoots());
     }
 
-    @GetMapping("/find/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<CategoryDto> findOne(@PathVariable final String id) throws Exception {
         final CategoryDto categoryDto = categoryService.findOne(id);
         if (categoryDto == null)
@@ -49,7 +49,7 @@ public class CategoryRestController {
         return ResponseEntity.ok(categoryDto);
     }
 
-    @PutMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CategoryDto> create(@RequestBody final CategoryDto categoryDto) throws Exception {
         final CategoryDto createdCategoryDto = categoryService.create(categoryDto);
         if (createdCategoryDto == null)
@@ -57,7 +57,7 @@ public class CategoryRestController {
         return ResponseEntity.ok(createdCategoryDto);
     }
 
-    @PutMapping(value = "/update", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CategoryDto> update(@RequestBody final CategoryDto categoryDto) throws Exception {
         final CategoryDto updatedCategoryDto = categoryService.update(categoryDto);
         if (updatedCategoryDto == null)
