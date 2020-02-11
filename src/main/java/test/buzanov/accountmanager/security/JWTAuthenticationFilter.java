@@ -67,6 +67,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .withExpiresAt(new Date(System.currentTimeMillis() + 2000000))
                 .sign(Algorithm.HMAC256("secret"));
         response.addHeader("Authorization", "Bearer " + token);
+        response.setContentType(MediaType.TEXT_PLAIN_VALUE);
         response.getWriter().println("Wellcome, " + user.getName());
         response.setStatus(200);
     }
