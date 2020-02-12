@@ -6,6 +6,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import test.buzanov.accountmanager.dto.TransactionDto;
 import test.buzanov.accountmanager.converter.ITransactionConverter;
+import test.buzanov.accountmanager.entity.Transaction;
+import test.buzanov.accountmanager.entity.User;
 import test.buzanov.accountmanager.form.TransactionForm;
 import test.buzanov.accountmanager.repository.TransactionRepository;
 
@@ -81,16 +83,19 @@ public class TransactionService implements ITransactionService {
     }
 
     @Nullable
-    public TransactionDto create(@Nullable final TransactionForm transactionDto) throws Exception {
-        if (transactionDto == null )
-            throw new Exception("Id can't be empty or null");
-        if (transactionDto.getAccountId() == null || transactionDto.getAccountId().isEmpty())
-            throw new Exception("AccountId can't be empty or null");
-        if (transactionDto.getSum() == null || transactionDto.getSum().compareTo(BigDecimal.ZERO) <= 0)
-            throw new Exception("Sum can't be null, negative or 0");
+    public TransactionDto create(@Nullable final TransactionForm transactionForm, final User user) throws Exception {
+        if (transactionForm == null )
+            throw new NullPointerException("Id can't be empty or null");
+        if (transactionForm.getAccountId() == null || transactionForm.getAccountId().isEmpty())
+            throw new NullPointerException("AccountId can't be empty or null");
+        if (transactionForm.getCategoryId() == null || transactionForm.getCategoryId().isEmpty())
+            throw new NullPointerException("CategoryId can't be empty or null");
+        if (transactionForm.getSum() == null || transactionForm.getSum().compareTo(BigDecimal.ZERO) <= 0)
+            throw new NullPointerException("Sum can't be null, negative or 0");
+
         lock.tryLock(LOCK_TIMEOUT, TimeUnit.MILLISECONDS);
         try {
-            return transactionDtoConverter.toTransactionDTO(transactionalActions.doTransaction(transactionDto));
+            return transactionDtoConverter.toTransactionDTO(transactionalActions.doTransaction(transactionForm, user));
         } finally {
             lock.unlock();
         }

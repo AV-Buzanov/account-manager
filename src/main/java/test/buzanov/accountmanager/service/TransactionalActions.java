@@ -9,14 +9,18 @@ import test.buzanov.accountmanager.converter.ITransactionConverter;
 import test.buzanov.accountmanager.entity.Account;
 import test.buzanov.accountmanager.entity.Category;
 import test.buzanov.accountmanager.entity.Transaction;
+import test.buzanov.accountmanager.entity.User;
 import test.buzanov.accountmanager.enumurated.TransactionType;
 import test.buzanov.accountmanager.form.TransactionForm;
 import test.buzanov.accountmanager.repository.AccountRepository;
 import test.buzanov.accountmanager.repository.CategoryRepository;
 import test.buzanov.accountmanager.repository.TransactionRepository;
 
+import javax.persistence.EntityNotFoundException;
+
 /**
  * Класс реализует @Transactional методы для сущности Transaction.
+ *
  * @author Aleksey Buzanov
  */
 
@@ -45,25 +49,23 @@ public class TransactionalActions implements ITransactionalActions {
     }
 
     @Transactional(rollbackFor = Exception.class, isolation = Isolation.SERIALIZABLE)
-    public Transaction doTransaction(@NotNull final TransactionForm transactionDto) throws Exception {
-        final Transaction transaction = transactionDtoConverter.toTransactionEntity(transactionDto);
-        if (transactionDto.getAccountId() == null || transaction == null)
-            throw new Exception("Null");
-        final Account account = accountRepository.findById(transactionDto.getAccountId()).orElse(null);
-        if (account == null)
-            throw new Exception("Account not found");
-        final Category category = categoryRepository.findById(transactionDto.getCategoryId()).orElse(null);
-        if (category == null)
-            throw new Exception("Category not found");
+    public Transaction doTransaction(@NotNull final TransactionForm transactionForm, final User user) {
+        final Transaction transaction = transactionDtoConverter.toTransactionEntity(transactionForm);
+        final Account account = accountRepository.findAccountByIdAndUsers(transactionForm.getAccountId(), user)
+                .orElseThrow(() -> new EntityNotFoundException("Account not found."));
 
-        if (transactionDto.getTransactionType().equals(TransactionType.WITHDRAW)) {
-            if (transactionDto.getSum().compareTo(account.getBalance()) > 0)
-                throw new Exception("Insufficient funds in the account");
-            account.subBalance(transactionDto.getSum());
-        } else if (transactionDto.getTransactionType().equals(TransactionType.DEPOSIT))
-            account.addBalance(transactionDto.getSum());
+        final Category category = categoryRepository.findById(transactionForm.getCategoryId())
+                .orElseThrow(() -> new EntityNotFoundException("Category not found."));
+
+        if (category.getTransactionType().equals(TransactionType.WITHDRAW)) {
+            if (transactionForm.getSum().compareTo(account.getBalance()) > 0)
+                throw new UnsupportedOperationException("Insufficient funds in the account");
+            account.subBalance(transactionForm.getSum());
+        } else if (category.getTransactionType().equals(TransactionType.DEPOSIT))
+            account.addBalance(transactionForm.getSum());
         transaction.setAccount(account);
         transaction.setCategory(category);
+        transaction.setTransactionType(category.getTransactionType());
         return transactionRepository.saveAndFlush(transaction);
     }
 
@@ -71,13 +73,13 @@ public class TransactionalActions implements ITransactionalActions {
     public void deleteTransaction(@NotNull final String id) throws Exception {
         final Transaction transaction = transactionRepository.findById(id).orElse(null);
         if (transaction == null)
-            throw new Exception("Transaction not found");
+            throw new EntityNotFoundException("Transaction not found");
         final Account account = transaction.getAccount();
         if (account == null)
-            throw new Exception("Account not found");
+            throw new EntityNotFoundException("Account not found");
         if (transaction.getTransactionType().equals(TransactionType.WITHDRAW)) {
             if (transaction.getSum().compareTo(account.getBalance()) > 0)
-                throw new Exception("Insufficient funds in the account");
+                throw new UnsupportedOperationException("Insufficient funds in the account");
             account.subBalance(transaction.getSum());
         } else if (transaction.getTransactionType().equals(TransactionType.DEPOSIT))
             account.addBalance(transaction.getSum());

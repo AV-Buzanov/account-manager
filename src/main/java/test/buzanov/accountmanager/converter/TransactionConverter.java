@@ -8,6 +8,7 @@ import test.buzanov.accountmanager.entity.Transaction;
 import test.buzanov.accountmanager.form.TransactionForm;
 
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
 
 /**
  * Класс реализует перевод сущности Transaction в DTO объект и обратно.
@@ -26,8 +27,10 @@ public class TransactionConverter implements ITransactionConverter {
             transaction.setSum(transactionForm.getSum().setScale(2, RoundingMode.DOWN));
         transaction.setName(transactionForm.getName());
         transaction.setDescription(transactionForm.getDescription());
-        transaction.setDate(transactionForm.getDate());
-        transaction.setTransactionType(transactionForm.getTransactionType());
+        if (transactionForm.getDate() == null)
+            transaction.setDate(LocalDateTime.now());
+        else
+            transaction.setDate(transactionForm.getDate());
         return transaction;
     }
 

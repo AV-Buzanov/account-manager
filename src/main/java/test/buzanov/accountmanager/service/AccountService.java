@@ -36,7 +36,7 @@ public class AccountService implements IAccountService {
     private final IAccountConverter accountConverter;
 
     public AccountService(@NotNull final AccountRepository accountRepository,
-                          @NotNull UserRepository userRepository,
+                          @NotNull final UserRepository userRepository,
                           @NotNull final IAccountConverter accountConverter) {
         this.accountRepository = accountRepository;
         this.userRepository = userRepository;
@@ -74,16 +74,15 @@ public class AccountService implements IAccountService {
             throw new NullPointerException("Argument can't be empty or null");
         final Account account = accountRepository.findAccountByIdAndUsers(id, user)
                 .orElseThrow(() -> new EntityNotFoundException("Account not found."));
-        final Account convertedAccountForUpdate = accountConverter.updateEntity(accountForm, account);
-        return accountConverter.toAccountDTO(accountRepository.saveAndFlush(convertedAccountForUpdate));
+        final Account updatedAccount = accountConverter.updateEntity(accountForm, account);
+        return accountConverter.toAccountDTO(accountRepository.saveAndFlush(updatedAccount));
     }
 
     @Transactional
     public boolean addUser(@Nullable final String id, final String username, final User user) {
         if (id == null || id.isEmpty() || username == null || username.isEmpty())
             throw new NullPointerException("Argument can't be empty or null");
-        final Account findedAccount = accountRepository.findById(id)
-                .filter(s -> s.getUsers().contains(user))
+        final Account findedAccount = accountRepository.findAccountByIdAndUsers(id, user)
                 .orElseThrow(() -> new EntityNotFoundException("Account not found."));
         final User findedUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("User not found."));

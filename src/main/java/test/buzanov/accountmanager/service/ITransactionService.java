@@ -1,6 +1,7 @@
 package test.buzanov.accountmanager.service;
 
 import test.buzanov.accountmanager.dto.TransactionDto;
+import test.buzanov.accountmanager.entity.User;
 import test.buzanov.accountmanager.enumurated.TransactionType;
 import test.buzanov.accountmanager.form.TransactionForm;
 
@@ -22,7 +23,7 @@ public interface ITransactionService {
 
     TransactionDto findOne(final String id) throws Exception;
 
-    TransactionDto create(final TransactionForm transactionDto) throws Exception;
+    TransactionDto create(final TransactionForm transactionDto, final User user) throws Exception;
 
     void delete(String id) throws Exception;
 }

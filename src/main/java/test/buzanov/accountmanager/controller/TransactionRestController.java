@@ -4,8 +4,10 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import test.buzanov.accountmanager.dto.TransactionDto;
+import test.buzanov.accountmanager.entity.User;
 import test.buzanov.accountmanager.form.TransactionForm;
 import test.buzanov.accountmanager.service.ITransactionService;
 
@@ -52,8 +54,9 @@ public class TransactionRestController {
 
 
     @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<TransactionDto> create(@RequestBody final TransactionForm transactionDTO) throws Exception {
-        final TransactionDto createdTransactionDto = transactionService.create(transactionDTO);
+    public ResponseEntity<TransactionDto> create(@RequestBody final TransactionForm transactionDTO,
+                                                 @AuthenticationPrincipal User user) throws Exception {
+        final TransactionDto createdTransactionDto = transactionService.create(transactionDTO, user);
         if (createdTransactionDto == null)
             return ResponseEntity.noContent().build();
         return ResponseEntity.ok(createdTransactionDto);

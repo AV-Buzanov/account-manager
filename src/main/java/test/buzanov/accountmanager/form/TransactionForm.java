@@ -27,18 +27,15 @@ public class TransactionForm {
     @Nullable
     private String description;
 
-    @Nullable
+    @NotNull
     private String accountId;
 
-    @Nullable
+    @NotNull
     private String categoryId;
 
     @Nullable
     private LocalDateTime date;
 
-    @Nullable
-    private BigDecimal sum;
-
     @NotNull
-    private TransactionType transactionType;
+    private BigDecimal sum;
 }
