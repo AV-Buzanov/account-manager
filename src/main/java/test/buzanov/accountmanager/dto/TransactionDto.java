@@ -35,6 +35,9 @@ public class TransactionDto {
     private String categoryId;
 
     @Nullable
+    private String userName;
+
+    @Nullable
     private LocalDateTime date;
 
     @Nullable

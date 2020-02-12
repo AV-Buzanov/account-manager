@@ -23,7 +23,7 @@ public class CustomExceptionController extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleAll(Exception ex, WebRequest request) {
         log.warn(ex.toString());
         ApiError apiError = new ApiError(
-                HttpStatus.INTERNAL_SERVER_ERROR, ex.getLocalizedMessage(), "error occurred");
+                HttpStatus.INTERNAL_SERVER_ERROR, ex.getLocalizedMessage(), ex.getClass().getSimpleName());
         return new ResponseEntity<Object>(
                 apiError, new HttpHeaders(), apiError.getStatus());
     }

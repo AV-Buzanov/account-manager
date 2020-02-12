@@ -66,6 +66,7 @@ public class TransactionalActions implements ITransactionalActions {
         transaction.setAccount(account);
         transaction.setCategory(category);
         transaction.setTransactionType(category.getTransactionType());
+        transaction.setUser(user);
         return transactionRepository.saveAndFlush(transaction);
     }
 

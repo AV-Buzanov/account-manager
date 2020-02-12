@@ -49,6 +49,8 @@ public class TransactionConverter implements ITransactionConverter {
         transactionDto.setName(transaction.getName());
         transactionDto.setDescription(transaction.getDescription());
         transactionDto.setTransactionType(transaction.getTransactionType());
+        if (transaction.getUser() != null)
+            transactionDto.setUserName(transaction.getUser().getUsername());
         return transactionDto;
     }
 }
