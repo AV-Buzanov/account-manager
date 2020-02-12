@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import test.buzanov.accountmanager.dto.TransactionDto;
+import test.buzanov.accountmanager.form.TransactionForm;
 import test.buzanov.accountmanager.service.ITransactionService;
 
 import java.time.LocalDateTime;
@@ -51,7 +52,7 @@ public class TransactionRestController {
 
 
     @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<TransactionDto> create(@RequestBody final TransactionDto transactionDTO) throws Exception {
+    public ResponseEntity<TransactionDto> create(@RequestBody final TransactionForm transactionDTO) throws Exception {
         final TransactionDto createdTransactionDto = transactionService.create(transactionDTO);
         if (createdTransactionDto == null)
             return ResponseEntity.noContent().build();

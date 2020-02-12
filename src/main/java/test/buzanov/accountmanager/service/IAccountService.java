@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import test.buzanov.accountmanager.dto.AccountDto;
 import test.buzanov.accountmanager.entity.User;
+import test.buzanov.accountmanager.form.AccountForm;
 
 import java.util.Collection;
 
@@ -13,15 +14,15 @@ import java.util.Collection;
  */
 
 public interface IAccountService {
-    Collection<AccountDto> findAll(int page, int size, final User user) throws Exception;
+    Collection<AccountDto> findAll(int page, int size, final User user) ;
 
-    AccountDto findOne(@Nullable final String id) throws Exception;
+    AccountDto findOne(@Nullable final String id, final User user);
 
-    AccountDto create(@Nullable final AccountDto accountDto, @NotNull final User user) throws Exception;
+    AccountDto create(@Nullable final AccountForm accountDto, @NotNull final User user) ;
 
-    AccountDto update(@Nullable final AccountDto accountDto) throws Exception;
+    AccountDto update(@Nullable final AccountForm accountForm, final String id, final User user);
 
-    void delete(String id) throws Exception;
+    void delete(String id) ;
 
-    boolean addUser(@Nullable final String id, String username) throws Exception;
+    boolean addUser(@Nullable final String id, final String username, final User user);
 }

@@ -25,6 +25,10 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true, exclude = {"transactions","users"})
 public class Account extends AbstractEntity {
 
+    private String name;
+
+    private String description;
+
     @NotNull
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     private Set<Transaction> transactions = new HashSet<>();
@@ -32,7 +36,7 @@ public class Account extends AbstractEntity {
     private BigDecimal balance = new BigDecimal("0").setScale(2, RoundingMode.DOWN);
 
     @NotNull
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(name = "account_user",
             joinColumns = @JoinColumn(name = "account_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")

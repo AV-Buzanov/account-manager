@@ -20,7 +20,13 @@ import java.util.UUID;
 @AllArgsConstructor
 public class TransactionDto {
     @Nullable
-    private String id = UUID.randomUUID().toString();
+    private String id;
+
+    @Nullable
+    private String name;
+
+    @Nullable
+    private String description;
 
     @Nullable
     private String accountId;
@@ -30,9 +36,6 @@ public class TransactionDto {
 
     @Nullable
     private LocalDateTime date;
-
-    @Nullable
-    private String description;
 
     @Nullable
     private Date creation;

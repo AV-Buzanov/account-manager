@@ -2,6 +2,7 @@ package test.buzanov.accountmanager.service;
 
 import test.buzanov.accountmanager.dto.TransactionDto;
 import test.buzanov.accountmanager.enumurated.TransactionType;
+import test.buzanov.accountmanager.form.TransactionForm;
 
 import java.math.BigDecimal;
 import java.util.Collection;
@@ -21,7 +22,7 @@ public interface ITransactionService {
 
     TransactionDto findOne(final String id) throws Exception;
 
-    TransactionDto create(final TransactionDto transactionDto) throws Exception;
+    TransactionDto create(final TransactionForm transactionDto) throws Exception;
 
     void delete(String id) throws Exception;
 }

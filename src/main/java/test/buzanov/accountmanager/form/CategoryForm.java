@@ -1,4 +1,4 @@
-package test.buzanov.accountmanager.dto;
+package test.buzanov.accountmanager.form;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,9 +18,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CategoryDto {
-    @Nullable
-    private String id;
+public class CategoryForm {
 
     @Nullable
     private String name;
@@ -31,6 +29,4 @@ public class CategoryDto {
     @Nullable
     private String parentId;
 
-    @NotNull
-    private TransactionType transactionType;
 }

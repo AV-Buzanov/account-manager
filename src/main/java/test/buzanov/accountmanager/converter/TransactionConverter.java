@@ -1,33 +1,33 @@
-package test.buzanov.accountmanager.dto.converter;
+package test.buzanov.accountmanager.converter;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import test.buzanov.accountmanager.dto.TransactionDto;
 import test.buzanov.accountmanager.entity.Transaction;
-import test.buzanov.accountmanager.repository.AccountRepository;
+import test.buzanov.accountmanager.form.TransactionForm;
 
-import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 /**
  * Класс реализует перевод сущности Transaction в DTO объект и обратно.
+ *
  * @author Aleksey Buzanov
  */
 
 @Component
-public class TransactionDtoConverter implements ITransactionDtoConverter {
+public class TransactionConverter implements ITransactionConverter {
 
     @Nullable
-    public Transaction toTransactionEntity(@Nullable final TransactionDto transactionDto) {
-        if (transactionDto == null || transactionDto.getId() == null) return null;
+    public Transaction toTransactionEntity(@Nullable final TransactionForm transactionForm) {
+        if (transactionForm == null) return null;
         @NotNull final Transaction transaction = new Transaction();
-        transaction.setId(transactionDto.getId());
-        transaction.setSum(transactionDto.getSum());
-        transaction.getSum().setScale(2, RoundingMode.DOWN);
-        transaction.setDescription(transactionDto.getDescription());
-        transaction.setTransactionType(transactionDto.getTransactionType());
+        if (transactionForm.getSum() != null)
+            transaction.setSum(transactionForm.getSum().setScale(2, RoundingMode.DOWN));
+        transaction.setName(transactionForm.getName());
+        transaction.setDescription(transactionForm.getDescription());
+        transaction.setDate(transactionForm.getDate());
+        transaction.setTransactionType(transactionForm.getTransactionType());
         return transaction;
     }
 
@@ -38,10 +38,12 @@ public class TransactionDtoConverter implements ITransactionDtoConverter {
         transactionDto.setId(transaction.getId());
         transactionDto.setSum(transaction.getSum());
         transactionDto.setCreation(transaction.getCreation());
+        transactionDto.setDate(transaction.getDate());
         if (transaction.getAccount() != null)
             transactionDto.setAccountId(transaction.getAccount().getId());
         if (transaction.getCategory() != null)
             transactionDto.setCategoryId(transaction.getCategory().getId());
+        transactionDto.setName(transaction.getName());
         transactionDto.setDescription(transaction.getDescription());
         transactionDto.setTransactionType(transaction.getTransactionType());
         return transactionDto;

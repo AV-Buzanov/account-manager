@@ -2,11 +2,11 @@ package test.buzanov.accountmanager.service;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import test.buzanov.accountmanager.dto.TransactionDto;
-import test.buzanov.accountmanager.dto.converter.ITransactionDtoConverter;
+import test.buzanov.accountmanager.converter.ITransactionConverter;
+import test.buzanov.accountmanager.form.TransactionForm;
 import test.buzanov.accountmanager.repository.TransactionRepository;
 
 import java.math.BigDecimal;
@@ -36,11 +36,11 @@ public class TransactionService implements ITransactionService {
     private final ITransactionalActions transactionalActions;
 
     @NotNull
-    private final ITransactionDtoConverter transactionDtoConverter;
+    private final ITransactionConverter transactionDtoConverter;
 
     public TransactionService(@NotNull final TransactionRepository transactionRepository,
                               @NotNull final ITransactionalActions transactionalActions,
-                              @NotNull final ITransactionDtoConverter transactionDtoConverter) {
+                              @NotNull final ITransactionConverter transactionDtoConverter) {
         this.transactionRepository = transactionRepository;
         this.transactionalActions = transactionalActions;
         this.transactionDtoConverter = transactionDtoConverter;
@@ -81,15 +81,13 @@ public class TransactionService implements ITransactionService {
     }
 
     @Nullable
-    public TransactionDto create(@Nullable final TransactionDto transactionDto) throws Exception {
-        if (transactionDto == null || transactionDto.getId() == null || transactionDto.getId().isEmpty())
+    public TransactionDto create(@Nullable final TransactionForm transactionDto) throws Exception {
+        if (transactionDto == null )
             throw new Exception("Id can't be empty or null");
         if (transactionDto.getAccountId() == null || transactionDto.getAccountId().isEmpty())
             throw new Exception("AccountId can't be empty or null");
         if (transactionDto.getSum() == null || transactionDto.getSum().compareTo(BigDecimal.ZERO) <= 0)
             throw new Exception("Sum can't be null, negative or 0");
-        if (transactionRepository.existsById(transactionDto.getId()))
-            throw new Exception("Transaction id already exists");
         lock.tryLock(LOCK_TIMEOUT, TimeUnit.MILLISECONDS);
         try {
             return transactionDtoConverter.toTransactionDTO(transactionalActions.doTransaction(transactionDto));

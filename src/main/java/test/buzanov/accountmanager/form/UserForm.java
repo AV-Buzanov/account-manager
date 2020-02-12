@@ -1,17 +1,14 @@
-package test.buzanov.accountmanager.dto;
+package test.buzanov.accountmanager.form;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Date;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDto {
+public class UserForm {
     private String username;
+    private String password;
     private String name;
-    private Date creation;
 }

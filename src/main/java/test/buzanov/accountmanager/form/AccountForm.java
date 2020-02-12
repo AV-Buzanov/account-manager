@@ -1,6 +1,8 @@
-package test.buzanov.accountmanager.dto;
+package test.buzanov.accountmanager.form;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;
@@ -15,16 +17,9 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AccountDto {
-    @Nullable
-    private String id;
-    @Nullable
-    private Date creation;
+public class AccountForm {
 
     private String name;
 
     private String description;
-
-    @Nullable
-    private BigDecimal balance;
 }

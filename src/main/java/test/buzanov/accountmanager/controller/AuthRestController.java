@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import test.buzanov.accountmanager.dto.UserDto;
 import test.buzanov.accountmanager.entity.User;
 import test.buzanov.accountmanager.enumurated.Role;
+import test.buzanov.accountmanager.form.UserForm;
 import test.buzanov.accountmanager.service.IUserService;
 
 import java.util.Collections;
@@ -33,7 +34,7 @@ public class AuthRestController {
     }
 
     @PostMapping("/registration")
-    public ResponseEntity<String> addUser(@RequestBody UserDto userDto) throws Exception {
+    public ResponseEntity<String> addUser(@RequestBody UserForm userDto) throws Exception {
         User user = new User();
         user.setName(userDto.getName());
         user.setUsername(userDto.getUsername());

@@ -1,10 +1,11 @@
-package test.buzanov.accountmanager.dto.converter;
+package test.buzanov.accountmanager.converter;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Component;
 import test.buzanov.accountmanager.dto.CategoryDto;
 import test.buzanov.accountmanager.entity.Category;
+import test.buzanov.accountmanager.form.CategoryForm;
 
 /**
  * Класс реализует перевод сущности Category в DTO объект и обратно.
@@ -13,15 +14,13 @@ import test.buzanov.accountmanager.entity.Category;
  */
 
 @Component
-public class CategoryDtoConverter implements ICategoryDtoConverter {
+public class CategoryConverter implements ICategoryConverter {
     @Nullable
-    public Category toCategoryEntity(@Nullable final CategoryDto categoryDto) {
-        if (categoryDto == null || categoryDto.getId() == null) return null;
+    public Category toCategoryEntity(@Nullable final CategoryForm categoryForm) {
+        if (categoryForm == null) return null;
         @NotNull final Category category = new Category();
-        category.setId(categoryDto.getId());
-        category.setName(categoryDto.getName());
-        category.setDescription(categoryDto.getDescription());
-        category.setTransactionType(categoryDto.getTransactionType());
+        category.setName(categoryForm.getName());
+        category.setDescription(categoryForm.getDescription());
         return category;
     }
 

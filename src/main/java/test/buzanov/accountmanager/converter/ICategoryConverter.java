@@ -1,7 +1,8 @@
-package test.buzanov.accountmanager.dto.converter;
+package test.buzanov.accountmanager.converter;
 
 import test.buzanov.accountmanager.dto.CategoryDto;
 import test.buzanov.accountmanager.entity.Category;
+import test.buzanov.accountmanager.form.CategoryForm;
 
 /**
  * Интерфейс конвертера для сущности Category.
@@ -9,8 +10,8 @@ import test.buzanov.accountmanager.entity.Category;
  * @author Aleksey Buzanov
  */
 
-public interface ICategoryDtoConverter {
-    Category toCategoryEntity(final CategoryDto categoryDto);
+public interface ICategoryConverter {
+    Category toCategoryEntity(final CategoryForm categoryForm);
 
     CategoryDto toCategoryDTO(final Category category);
 }

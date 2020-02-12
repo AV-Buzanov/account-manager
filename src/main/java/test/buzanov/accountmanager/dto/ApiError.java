@@ -1,4 +1,4 @@
-package test.buzanov.accountmanager.other;
+package test.buzanov.accountmanager.dto;
 
 import lombok.Data;
 import lombok.Getter;

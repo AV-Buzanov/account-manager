@@ -2,6 +2,7 @@ package test.buzanov.accountmanager.service;
 
 import test.buzanov.accountmanager.dto.TransactionDto;
 import test.buzanov.accountmanager.entity.Transaction;
+import test.buzanov.accountmanager.form.TransactionForm;
 
 /**
  * Интерфейс транзакционных методов сущности Transaction.
@@ -10,7 +11,7 @@ import test.buzanov.accountmanager.entity.Transaction;
 
 public interface ITransactionalActions {
 
-    Transaction doTransaction(final TransactionDto transactionDto) throws Exception;
+    Transaction doTransaction(final TransactionForm transactionDto) throws Exception;
 
     void deleteTransaction(final String id) throws Exception;
 }

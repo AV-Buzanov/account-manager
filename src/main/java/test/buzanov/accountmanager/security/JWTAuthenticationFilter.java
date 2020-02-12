@@ -5,18 +5,15 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.codec.HttpMessageEncoder;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.filter.CharacterEncodingFilter;
-import sun.misc.CharacterEncoder;
 import test.buzanov.accountmanager.dto.UserDto;
 import test.buzanov.accountmanager.entity.User;
-import test.buzanov.accountmanager.other.ApiError;
+import test.buzanov.accountmanager.dto.ApiError;
+import test.buzanov.accountmanager.form.UserForm;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -36,7 +33,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         try {
-            final UserDto user = new ObjectMapper().readValue(request.getInputStream(), UserDto.class);
+            final UserForm user = new ObjectMapper().readValue(request.getInputStream(), UserForm.class);
             return authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(user.getUsername(),
                             user.getPassword(),

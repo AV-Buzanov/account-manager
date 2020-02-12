@@ -5,11 +5,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import test.buzanov.accountmanager.dto.TransactionDto;
-import test.buzanov.accountmanager.dto.converter.ITransactionDtoConverter;
+import test.buzanov.accountmanager.converter.ITransactionConverter;
 import test.buzanov.accountmanager.entity.Account;
 import test.buzanov.accountmanager.entity.Category;
 import test.buzanov.accountmanager.entity.Transaction;
 import test.buzanov.accountmanager.enumurated.TransactionType;
+import test.buzanov.accountmanager.form.TransactionForm;
 import test.buzanov.accountmanager.repository.AccountRepository;
 import test.buzanov.accountmanager.repository.CategoryRepository;
 import test.buzanov.accountmanager.repository.TransactionRepository;
@@ -31,12 +32,12 @@ public class TransactionalActions implements ITransactionalActions {
     private final CategoryRepository categoryRepository;
 
     @NotNull
-    private final ITransactionDtoConverter transactionDtoConverter;
+    private final ITransactionConverter transactionDtoConverter;
 
     public TransactionalActions(@NotNull final TransactionRepository transactionRepository,
                                 @NotNull final AccountRepository accountRepository,
                                 @NotNull final CategoryRepository categoryRepository,
-                                @NotNull final ITransactionDtoConverter transactionDtoConverter) {
+                                @NotNull final ITransactionConverter transactionDtoConverter) {
         this.transactionRepository = transactionRepository;
         this.accountRepository = accountRepository;
         this.categoryRepository = categoryRepository;
@@ -44,7 +45,7 @@ public class TransactionalActions implements ITransactionalActions {
     }
 
     @Transactional(rollbackFor = Exception.class, isolation = Isolation.SERIALIZABLE)
-    public Transaction doTransaction(@NotNull final TransactionDto transactionDto) throws Exception {
+    public Transaction doTransaction(@NotNull final TransactionForm transactionDto) throws Exception {
         final Transaction transaction = transactionDtoConverter.toTransactionEntity(transactionDto);
         if (transactionDto.getAccountId() == null || transaction == null)
             throw new Exception("Null");

@@ -31,6 +31,9 @@ public class Transaction extends AbstractEntity {
     private Account account;
 
     @Nullable
+    private String name;
+
+    @Nullable
     private String description;
 
     @Nullable

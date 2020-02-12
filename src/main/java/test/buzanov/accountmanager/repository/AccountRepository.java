@@ -29,8 +29,7 @@ public interface AccountRepository extends JpaRepository<Account, String> {
     @Query(value = "update Account a set a.balance = :balance where a.id = :id")
     void setAccountBalanceById(@Param("id") String id, @Param("balance") BigDecimal balance);
 
-    Optional<Account> findAccountByIdAndUsers(String accountId, String userId);
-
-
     Page<Account> findAllByUsers(Pageable pageable, User user);
+
+    Optional<Account> findAccountByIdAndUsers(String accountId, User user);
 }

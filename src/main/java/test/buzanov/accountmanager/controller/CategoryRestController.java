@@ -5,6 +5,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import test.buzanov.accountmanager.dto.CategoryDto;
+import test.buzanov.accountmanager.form.CategoryForm;
 import test.buzanov.accountmanager.service.ICategoryService;
 
 import java.util.Collection;
@@ -50,16 +51,17 @@ public class CategoryRestController {
     }
 
     @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CategoryDto> create(@RequestBody final CategoryDto categoryDto) throws Exception {
+    public ResponseEntity<CategoryDto> create(@RequestBody final CategoryForm categoryDto) throws Exception {
         final CategoryDto createdCategoryDto = categoryService.create(categoryDto);
         if (createdCategoryDto == null)
             return ResponseEntity.noContent().build();
         return ResponseEntity.ok(createdCategoryDto);
     }
 
-    @PutMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CategoryDto> update(@RequestBody final CategoryDto categoryDto) throws Exception {
-        final CategoryDto updatedCategoryDto = categoryService.update(categoryDto);
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CategoryDto> update(@RequestBody final CategoryForm categoryDto,
+                                              @PathVariable final String id) throws Exception {
+        final CategoryDto updatedCategoryDto = categoryService.update(categoryDto, id);
         if (updatedCategoryDto == null)
             return ResponseEntity.noContent().build();
         return ResponseEntity.ok(updatedCategoryDto);
