@@ -34,6 +34,7 @@ public class UserConverter implements IUserConverter {
         userDto.setCreation(user.getCreation());
         userDto.setName(user.getName());
         userDto.setUsername(user.getUsername());
+        userDto.setAuthorities(user.getAuthorities());
         return userDto;
     }
 }
