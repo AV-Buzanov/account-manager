@@ -2,8 +2,10 @@ package test.buzanov.accountmanager.controller;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import test.buzanov.accountmanager.converter.IUserConverter;
 import test.buzanov.accountmanager.dto.UserDto;
 import test.buzanov.accountmanager.entity.User;
 import test.buzanov.accountmanager.enumurated.Role;
@@ -24,11 +26,13 @@ public class AuthRestController {
 
     private final IUserService userService;
 
+    private final IUserConverter userConverter;
 
     private final PasswordEncoder passwordEncoder;
 
-    public AuthRestController(@Qualifier(value = "userService") final IUserService userService, PasswordEncoder passwordEncoder) {
+    public AuthRestController(@Qualifier(value = "userService") final IUserService userService, IUserConverter userConverter, PasswordEncoder passwordEncoder) {
         this.userService = userService;
+        this.userConverter = userConverter;
 
         this.passwordEncoder = passwordEncoder;
     }
@@ -45,5 +49,10 @@ public class AuthRestController {
         userService.create(user);
 
         return ResponseEntity.ok("Registration successful");
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<UserDto> profile(@AuthenticationPrincipal User user) throws Exception {
+        return ResponseEntity.ok(userConverter.toUserDTO(user));
     }
 }
