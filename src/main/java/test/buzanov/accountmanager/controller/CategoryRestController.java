@@ -70,7 +70,7 @@ public class CategoryRestController {
         return ResponseEntity.ok(updatedCategoryDto);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable final String id) throws Exception {
         categoryService.delete(id);
         return ResponseEntity.ok().build();

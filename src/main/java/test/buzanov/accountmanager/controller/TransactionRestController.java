@@ -62,7 +62,7 @@ public class TransactionRestController {
         return ResponseEntity.ok(createdTransactionDto);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable final String id) throws Exception {
         transactionService.delete(id);
         return ResponseEntity.ok().build();
