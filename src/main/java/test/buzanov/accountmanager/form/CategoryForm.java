@@ -1,6 +1,7 @@
 package test.buzanov.accountmanager.form;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -18,6 +19,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class CategoryForm {
 
     @Nullable
@@ -28,5 +30,10 @@ public class CategoryForm {
 
     @Nullable
     private String parentId;
+
+    @Nullable
+    private String accountId;
+
+    private TransactionType transactionType;
 
 }

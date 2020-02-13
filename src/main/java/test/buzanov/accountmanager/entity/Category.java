@@ -1,5 +1,6 @@
 package test.buzanov.accountmanager.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -23,7 +24,7 @@ import java.util.Set;
 @Table(name = "app_category")
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true, exclude = "parent")
+@EqualsAndHashCode(callSuper = true, exclude = {"childs"})
 public class Category extends AbstractEntity {
 
     @Nullable
@@ -38,12 +39,17 @@ public class Category extends AbstractEntity {
     private Category parent;
 
     @NotNull
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-    private Set<Transaction> transactions = new HashSet<>();
-
-    @NotNull
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
     private Set<Category> childs = new HashSet<>();
+
+    @NotNull
+    @OneToMany(mappedBy = "category", cascade = CascadeType.PERSIST)
+    private Set<Transaction> transactions = new HashSet<>();
+
+    @Nullable
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_id")
+    private Account account;
 
     @NotNull
     @Enumerated(value = EnumType.STRING)

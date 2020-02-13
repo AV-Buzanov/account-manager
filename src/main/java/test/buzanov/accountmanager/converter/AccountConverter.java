@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Component;
 import test.buzanov.accountmanager.dto.AccountDto;
 import test.buzanov.accountmanager.entity.Account;
+import test.buzanov.accountmanager.entity.User;
 import test.buzanov.accountmanager.form.AccountForm;
 
 /**
@@ -33,6 +34,8 @@ public class AccountConverter implements IAccountConverter {
         accountDto.setCreation(account.getCreation());
         accountDto.setName(account.getName());
         accountDto.setDescription(account.getDescription());
+        for (User user : account.getUsers())
+            accountDto.getUsers().add(user.getUsername());
         return accountDto;
     }
 

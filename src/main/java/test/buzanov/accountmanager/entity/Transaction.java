@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 @Table(name = "app_transaction")
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true, exclude = {"account", "category"})
+@EqualsAndHashCode(callSuper = true, exclude = {"account", "category", "user"})
 public class Transaction extends AbstractEntity {
 
     @Nullable
@@ -43,7 +43,6 @@ public class Transaction extends AbstractEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
-
 
     @Nullable
     @ManyToOne(fetch = FetchType.LAZY)

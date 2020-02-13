@@ -1,9 +1,8 @@
 package test.buzanov.accountmanager;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,8 +11,8 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.event.annotation.AfterTestClass;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Transactional;
 import test.buzanov.accountmanager.dto.AccountDto;
 import test.buzanov.accountmanager.dto.CategoryDto;
 import test.buzanov.accountmanager.dto.TransactionDto;
@@ -26,13 +25,11 @@ import test.buzanov.accountmanager.repository.AccountRepository;
 import test.buzanov.accountmanager.repository.UserRepository;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class IntegrationTest {
+public class RelationsTest {
     private final static int NUMBER_OF_THREADS = 2000;
 
     private final static int NUMBER_OF_FAIL_THREADS = 100;
@@ -54,13 +51,10 @@ public class IntegrationTest {
 
     @Before
     public void before() {
-        final UserForm userForm = new UserForm();
-        userForm.setUsername("Test");
-        userForm.setPassword("password");
-        userForm.setName("name");
+        final UserForm userForm = UserForm.builder()
+                .username("Test").password("password").name("name").build();
+
         final HttpEntity<UserForm> userEntity = new HttpEntity<>(userForm);
-
-
         final ResponseEntity<String> regResponse = restTemplate.exchange("/api/auth/registration", HttpMethod.POST, userEntity, String.class);
         Assert.assertEquals("User registration fail", 200, regResponse.getStatusCodeValue());
 
@@ -72,30 +66,18 @@ public class IntegrationTest {
         tokenHeader = new HttpHeaders();
         tokenHeader.add("Authorization", token);
 
-        final AccountForm accountForm = new AccountForm();
-        accountForm.setName("Test");
-        accountForm.setDescription("Test");
+        final HttpEntity<AccountForm> accountEntity = new HttpEntity<>(AccountForm.builder().name("Test").description("Test").build(), tokenHeader);
+        final ResponseEntity<AccountDto> account1Response = restTemplate.exchange("/api/accounts/", HttpMethod.POST, accountEntity, AccountDto.class);
+        Assert.assertEquals("Account registration fail", 200, account1Response.getStatusCodeValue());
+        Assert.assertNotNull("Account body not found", account1Response.getBody());
 
-        final HttpEntity<AccountForm> accountEntity = new HttpEntity<>(accountForm, tokenHeader);
-
-
-        final ResponseEntity<AccountDto> accResponse = restTemplate.exchange("/api/accounts/", HttpMethod.POST, accountEntity, AccountDto.class);
-        Assert.assertEquals("Account registration fail", 200, accResponse.getStatusCodeValue());
-        Assert.assertNotNull("Account not found", accResponse.getBody());
-
-        accountId = accResponse.getBody().getId();
-
-        final CategoryForm categoryForm = new CategoryForm();
-        categoryForm.setName("Test");
-        categoryForm.setAccountId(accountId);
-        categoryForm.setTransactionType(TransactionType.DEPOSIT);
-        final HttpEntity<CategoryForm> categoryEntity = new HttpEntity<>(categoryForm, tokenHeader);
-        final ResponseEntity<CategoryDto> categoryResponse = restTemplate.exchange("/api/categories/", HttpMethod.POST, categoryEntity, CategoryDto.class);
-        Assert.assertEquals("Category registration fail", 200, categoryResponse.getStatusCodeValue());
-        Assert.assertNotNull("Category not found", categoryResponse.getBody());
-        categoryId = categoryResponse.getBody().getId();
+        final HttpEntity<AccountForm> account2Entity = new HttpEntity<>(AccountForm.builder().name("Test2").description("Test2").build(), tokenHeader);
+        final ResponseEntity<AccountDto> account2Response = restTemplate.exchange("/api/accounts/", HttpMethod.POST, account2Entity, AccountDto.class);
+        Assert.assertEquals("Account2 registration fail", 200, account2Response.getStatusCodeValue());
+        Assert.assertNotNull("Account2 body not found", account2Response.getBody());
 
     }
+
 
     @After
     public void after() {
@@ -103,36 +85,29 @@ public class IntegrationTest {
     }
 
         @Test
-    public void test() {
-            final TransactionForm transactionForm = new TransactionForm();
-            transactionForm.setName("Test");
-            transactionForm.setAccountId(accountId);
-            transactionForm.setCategoryId(categoryId);
-            transactionForm.setSum(BigDecimal.valueOf(200));
-            final HttpEntity<TransactionForm> transactionEntity = new HttpEntity<>(transactionForm, tokenHeader);
-            final ResponseEntity<TransactionDto> transResponse = restTemplate.exchange("/api/transactions/", HttpMethod.POST, transactionEntity, TransactionDto.class);
-            Assert.assertEquals("Transaction registration fail", 200, transResponse.getStatusCodeValue());
+    public void accounts() {
 
-    }
+            final ResponseEntity<AccountDto[]> account3Response = restTemplate.exchange("/api/accounts/", HttpMethod.GET
+                    , new HttpEntity<>(tokenHeader), AccountDto[].class );
+            Assert.assertEquals("Accounts get fail", 200, account3Response.getStatusCodeValue());
+            Assert.assertNotNull("Accounts get body not found", account3Response.getBody());
+            Assert.assertEquals("Count of accounts incorrect.", account3Response.getBody().length, 2);
+            Assert.assertTrue("Account doesn't contains username."
+                    ,account3Response.getBody()[0].getUsers().contains("Test")
+                            &&account3Response.getBody()[1].getUsers().contains("Test"));
 
-    @Test
-    public void test2() {
-        final TransactionForm transactionForm = new TransactionForm();
-        transactionForm.setName("Test");
-        transactionForm.setAccountId(accountId);
-        transactionForm.setCategoryId(categoryId);
-        transactionForm.setSum(BigDecimal.valueOf(200));
-        final HttpEntity<TransactionForm> transactionEntity = new HttpEntity<>(transactionForm, tokenHeader);
-        final ResponseEntity<TransactionDto> transResponse = restTemplate.exchange("/api/transactions/", HttpMethod.POST, transactionEntity, TransactionDto.class);
-        Assert.assertEquals("Transaction registration fail", 200, transResponse.getStatusCodeValue());
+            String account1Id = account3Response.getBody()[0].getId();
+            String account2Id = account3Response.getBody()[1].getId();
 
-        final ResponseEntity<String> del = restTemplate.exchange("/api/accounts/"+accountId, HttpMethod.DELETE, transactionEntity, String.class);
-        Assert.assertEquals("Acc del fail", 200, del.getStatusCodeValue());
+            final HttpEntity<CategoryForm> categoryEntity = new HttpEntity<>(CategoryForm.builder().accountId(account1Id).name("Test")
+                    .transactionType(TransactionType.DEPOSIT).build(), tokenHeader);
+            final ResponseEntity<CategoryDto> category1Response = restTemplate.exchange("/api/categories/", HttpMethod.POST, categoryEntity, CategoryDto.class);
+            Assert.assertEquals("Category registration fail", 200, category1Response.getStatusCodeValue());
+            Assert.assertNotNull("Category body not found", category1Response.getBody());
+            Assert.assertNotNull("AccountId in category body not found", category1Response.getBody().getAccountId());
 
-        final ResponseEntity<AccountDto> lol = restTemplate.exchange("/api/accounts/"+accountId, HttpMethod.GET, transactionEntity, AccountDto.class);
-        Assert.assertEquals("Acc del fail", 500, lol.getStatusCodeValue());
+        }
 
-    }
 
 
 //

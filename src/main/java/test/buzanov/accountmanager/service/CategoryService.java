@@ -7,10 +7,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import test.buzanov.accountmanager.dto.CategoryDto;
 import test.buzanov.accountmanager.converter.ICategoryConverter;
+import test.buzanov.accountmanager.entity.Account;
 import test.buzanov.accountmanager.entity.Category;
+import test.buzanov.accountmanager.entity.User;
 import test.buzanov.accountmanager.form.CategoryForm;
+import test.buzanov.accountmanager.repository.AccountRepository;
 import test.buzanov.accountmanager.repository.CategoryRepository;
-import test.buzanov.accountmanager.repository.TransactionRepository;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -28,16 +30,16 @@ public class CategoryService implements ICategoryService {
     private final CategoryRepository categoryRepository;
 
     @NotNull
-    private final TransactionRepository transactionRepository;
+    private final AccountRepository accountRepository;
 
     @NotNull
     private final ICategoryConverter categoryDtoConverter;
 
     public CategoryService(@NotNull final CategoryRepository categoryRepository,
-                           @NotNull final TransactionRepository transactionRepository,
+                           @NotNull final AccountRepository transactionRepository,
                            @NotNull final ICategoryConverter categoryDtoConverter) {
         this.categoryRepository = categoryRepository;
-        this.transactionRepository = transactionRepository;
+        this.accountRepository = transactionRepository;
         this.categoryDtoConverter = categoryDtoConverter;
     }
 
@@ -69,14 +71,17 @@ public class CategoryService implements ICategoryService {
 
     @Nullable
     @Transactional
-    public CategoryDto create(@Nullable final CategoryForm categoryForm) throws Exception {
+    public CategoryDto create(@Nullable final CategoryForm categoryForm, final User user) throws Exception {
         if (categoryForm == null)
             throw new Exception("Argument can't be empty or null");
-        final Category account = categoryDtoConverter.toCategoryEntity(categoryForm);
+        final Category category = categoryDtoConverter.toCategoryEntity(categoryForm);
         if (categoryForm.getParentId() != null)
-            account.setParent(categoryRepository
+            category.setParent(categoryRepository
                     .findById(categoryForm.getParentId()).orElse(null));
-        return categoryDtoConverter.toCategoryDTO(categoryRepository.saveAndFlush(account));
+        Account account = accountRepository.findById(categoryForm.getAccountId())
+                .orElseThrow(()->new NullPointerException("Account not found"));
+        category.setAccount(account);
+        return categoryDtoConverter.toCategoryDTO(categoryRepository.saveAndFlush(category));
     }
 
     @Nullable

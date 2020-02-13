@@ -31,6 +31,9 @@ public class CategoryDto {
     @Nullable
     private String parentId;
 
+    @Nullable
+    private String accountId;
+
     @NotNull
     private TransactionType transactionType;
 }

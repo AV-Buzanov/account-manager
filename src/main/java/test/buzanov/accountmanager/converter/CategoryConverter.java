@@ -21,6 +21,7 @@ public class CategoryConverter implements ICategoryConverter {
         @NotNull final Category category = new Category();
         category.setName(categoryForm.getName());
         category.setDescription(categoryForm.getDescription());
+        category.setTransactionType(categoryForm.getTransactionType());
         return category;
     }
 
@@ -33,6 +34,8 @@ public class CategoryConverter implements ICategoryConverter {
         categoryDto.setDescription(category.getDescription());
         if (category.getParent() != null)
             categoryDto.setParentId(category.getParent().getId());
+        if (category.getAccount() != null)
+            categoryDto.setAccountId(category.getAccount().getId());
         categoryDto.setTransactionType(category.getTransactionType());
         return categoryDto;
     }

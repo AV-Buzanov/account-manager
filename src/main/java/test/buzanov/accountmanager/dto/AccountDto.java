@@ -2,9 +2,12 @@ package test.buzanov.accountmanager.dto;
 
 import lombok.*;
 import org.jetbrains.annotations.Nullable;
+import test.buzanov.accountmanager.entity.Category;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -24,6 +27,8 @@ public class AccountDto {
     private String name;
 
     private String description;
+
+    private Set<String> users = new HashSet<>();
 
     @Nullable
     private BigDecimal balance;
