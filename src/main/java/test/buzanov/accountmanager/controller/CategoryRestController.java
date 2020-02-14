@@ -5,6 +5,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 import test.buzanov.accountmanager.dto.CategoryDto;
 import test.buzanov.accountmanager.entity.User;
 import test.buzanov.accountmanager.form.CategoryForm;
@@ -54,7 +55,7 @@ public class CategoryRestController {
 
     @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CategoryDto> create(@RequestBody final CategoryForm categoryDto,
-                                              @AuthenticationPrincipal User user) throws Exception {
+                                              @ApiIgnore @AuthenticationPrincipal User user) throws Exception {
         final CategoryDto createdCategoryDto = categoryService.create(categoryDto, user);
         if (createdCategoryDto == null)
             return ResponseEntity.noContent().build();

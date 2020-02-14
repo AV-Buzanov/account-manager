@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 import test.buzanov.accountmanager.converter.IUserConverter;
 import test.buzanov.accountmanager.dto.UserDto;
 import test.buzanov.accountmanager.entity.User;
@@ -52,7 +53,7 @@ public class AuthRestController {
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<UserDto> profile(@AuthenticationPrincipal User user) throws Exception {
+    public ResponseEntity<UserDto> profile(@ApiIgnore @AuthenticationPrincipal User user) throws Exception {
         return ResponseEntity.ok(userConverter.toUserDTO(user));
     }
 }

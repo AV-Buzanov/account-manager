@@ -43,6 +43,7 @@ public class User extends AbstractEntity implements UserDetails {
 
     @NotNull
     @ManyToMany(mappedBy = "users", cascade = {CascadeType.ALL})
+
     @JsonIgnore
     private Set<Account> accounts = new HashSet<>();
 
