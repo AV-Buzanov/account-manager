@@ -22,3 +22,6 @@ logging:
   file:
     name: spring-boot-logger-log4j2.log
     path: /logs/
+token:
+  secret: a6761e5b-2e21-4728-8615-b812956d17f1
+  expireTime: 604800000

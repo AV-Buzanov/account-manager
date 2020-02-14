@@ -3,6 +3,7 @@ package test.buzanov.accountmanager.security;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Builder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -10,9 +11,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import test.buzanov.accountmanager.dto.UserDto;
-import test.buzanov.accountmanager.entity.User;
+import test.buzanov.accountmanager.converter.IUserConverter;
 import test.buzanov.accountmanager.dto.ApiError;
+import test.buzanov.accountmanager.entity.User;
 import test.buzanov.accountmanager.form.UserForm;
 
 import javax.servlet.FilterChain;
@@ -22,13 +23,16 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
 
+@Builder
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    private final AuthenticationManager authenticationManager;
+    private AuthenticationManager authenticationManager;
 
-    public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
-        this.authenticationManager = authenticationManager;
-    }
+    private IUserConverter userConverter;
+
+    private String secret;
+
+    private long expiredTimeMillis;
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -61,12 +65,11 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         final User user = (User) authResult.getPrincipal();
         String token = JWT.create()
                 .withSubject(new ObjectMapper().writeValueAsString(user))
-                .withExpiresAt(new Date(System.currentTimeMillis() + 2000000))
-                .sign(Algorithm.HMAC256("secret"));
+                .withExpiresAt(new Date(System.currentTimeMillis() + expiredTimeMillis))
+                .sign(Algorithm.HMAC256(secret));
         response.addHeader("Authorization", "Bearer " + token);
-        response.setContentType(MediaType.TEXT_PLAIN_VALUE);
-        response.setHeader("ProfilePath", "/api/auth/profile");
-        response.getWriter().print("Wellcome, "+ user.getName());
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.getWriter().print(new ObjectMapper().writeValueAsString(userConverter.toUserDTO(user)));
         response.setStatus(200);
     }
 }

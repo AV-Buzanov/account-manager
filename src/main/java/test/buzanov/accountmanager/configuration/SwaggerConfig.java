@@ -27,7 +27,7 @@ public class SwaggerConfig {
         return new ApiInfoBuilder()
                 .title("Money manager API")
                 .description("RESTful service for effective money management.")
-                .contact(new Contact("Aleksey Buzanov", "https://github.com/AV-Buzanov", "av.buzanov@gmail.com" ))
+                .contact(new Contact("Aleksey Buzanov", "https://github.com/AV-Buzanov", "av.buzanov@gmail.com"))
                 .license("GitHub")
                 .licenseUrl("https://github.com/AV-Buzanov/account-manager")
                 .version("1.0a")
