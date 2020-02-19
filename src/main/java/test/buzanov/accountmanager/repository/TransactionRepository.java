@@ -31,10 +31,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, String
 
     List<Transaction> findAllByAccountIdAndTransactionType(String categoryId, TransactionType type, Pageable pageable);
 
-
-    @Query(value = "from Transaction t where t.account.id=:id and t.transactionType='DEPOSIT'")
-    List<Transaction> findAllByCategoryIdCase(String categoryId, String accountId, Pageable pageable);
-
     @Query(value = "select sum(t.sum) from Transaction t where t.account.id=:id and t.transactionType='DEPOSIT'")
     BigDecimal getDepositOperationsSum(@Param("id") String id);
 
