@@ -14,7 +14,7 @@ spring:
     driverClassName: org.postgresql.Driver
   mvc:
     servlet:
-      path: /api
+      path: /
 server:
   port: 8080
 logging:

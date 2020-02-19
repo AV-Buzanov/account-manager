@@ -34,21 +34,18 @@ public class AuthRestController {
     public AuthRestController(@Qualifier(value = "userService") final IUserService userService, IUserConverter userConverter, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.userConverter = userConverter;
-
         this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping("/registration")
-    public ResponseEntity<String> addUser(@RequestBody UserForm userDto) throws Exception {
-        User user = new User();
-        user.setName(userDto.getName());
-        user.setUsername(userDto.getUsername());
-        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+    public ResponseEntity<String> addUser(@RequestBody UserForm userForm) throws Exception {
+        final User user = new User();
+        user.setName(userForm.getName());
+        user.setUsername(userForm.getUsername());
+        user.setPassword(passwordEncoder.encode(userForm.getPassword()));
         user.setEnabled(true);
         user.setAuthorities(Collections.singleton(Role.USER));
-
         userService.create(user);
-
         return ResponseEntity.ok("Registration successful");
     }
 

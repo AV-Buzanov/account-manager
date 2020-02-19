@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
+import test.buzanov.accountmanager.dto.AccountDto;
 import test.buzanov.accountmanager.dto.TransactionDto;
 import test.buzanov.accountmanager.entity.User;
 import test.buzanov.accountmanager.form.TransactionForm;
@@ -15,9 +16,12 @@ import test.buzanov.accountmanager.service.ITransactionService;
 import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Класс публикует REST сервис для управления сущностью Transaction.
+ *
  * @author Aleksey Buzanov
  */
 
@@ -31,17 +35,25 @@ public class TransactionRestController {
         this.transactionService = transactionService;
     }
 
+    @GetMapping("/account/{account}/category/{category}")
+    public ResponseEntity<Collection<TransactionDto>> findAllByAccountAndCategory(@PathVariable final String account,
+                                                                                  @PathVariable final String category,
+                                                                       @RequestHeader(value = "page", defaultValue = "0") final int page,
+                                                                       @RequestHeader(value = "size", defaultValue = "100") final int size) throws Exception {
+        return ResponseEntity.ok(transactionService.findAllByAccountAndCategory(account, category, page, size));
+    }
+
     @GetMapping("/account/{id}")
     public ResponseEntity<Collection<TransactionDto>> findAllByAccount(@PathVariable final String id,
-                                                                       @RequestParam(value = "page", defaultValue = "0") final int page,
-                                                                       @RequestParam(value = "size", defaultValue = "100") final int size) throws Exception {
+                                                                       @RequestHeader(value = "page", defaultValue = "0") final int page,
+                                                                       @RequestHeader(value = "size", defaultValue = "100") final int size) throws Exception {
         return ResponseEntity.ok(transactionService.findAllByAccount(id, page, size));
     }
 
     @GetMapping("/category/{id}")
     public ResponseEntity<Collection<TransactionDto>> findAllByCategory(@PathVariable final String id,
-                                                                        @RequestParam(value = "page", defaultValue = "0") final int page,
-                                                                        @RequestParam(value = "size", defaultValue = "100") final int size) throws Exception {
+                                                                        @RequestHeader(value = "page", defaultValue = "0") final int page,
+                                                                        @RequestHeader(value = "size", defaultValue = "100") final int size) throws Exception {
         return ResponseEntity.ok(transactionService.findAllByCategory(id, page, size));
     }
 
@@ -53,6 +65,11 @@ public class TransactionRestController {
         return ResponseEntity.ok(transactionDto);
     }
 
+    @GetMapping("/update/{timestamp}")
+    public ResponseEntity<List<TransactionDto>> update(@PathVariable("timestamp") final Long timestamp,
+                                                   @ApiIgnore @AuthenticationPrincipal final User user) {
+        return ResponseEntity.ok(transactionService.update(user, new Date(timestamp)));
+    }
 
     @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TransactionDto> create(@RequestBody final TransactionForm transactionDTO,

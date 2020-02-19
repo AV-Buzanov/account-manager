@@ -7,11 +7,14 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 import test.buzanov.accountmanager.dto.CategoryDto;
+import test.buzanov.accountmanager.dto.TransactionDto;
 import test.buzanov.accountmanager.entity.User;
 import test.buzanov.accountmanager.form.CategoryForm;
 import test.buzanov.accountmanager.service.ICategoryService;
 
 import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Класс публикует REST сервис для управления сущностью Category.
@@ -30,8 +33,8 @@ public class CategoryRestController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<Collection<CategoryDto>> findAll(@RequestParam(value = "page", defaultValue = "0") final int page,
-                                                           @RequestParam(value = "size", defaultValue = "100") final int size) {
+    public ResponseEntity<Collection<CategoryDto>> findAll(@RequestHeader(value = "page", defaultValue = "0") final int page,
+                                                           @RequestHeader(value = "size", defaultValue = "100") final int size) {
         return ResponseEntity.ok(categoryService.findAll(page, size));
     }
 
@@ -75,5 +78,11 @@ public class CategoryRestController {
     public ResponseEntity<String> delete(@PathVariable final String id) throws Exception {
         categoryService.delete(id);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/update/{timestamp}")
+    public ResponseEntity<List<CategoryDto>> update(@PathVariable("timestamp") final Long timestamp,
+                                                       @ApiIgnore @AuthenticationPrincipal final User user) {
+        return ResponseEntity.ok(categoryService.update(user, new Date(timestamp)));
     }
 }

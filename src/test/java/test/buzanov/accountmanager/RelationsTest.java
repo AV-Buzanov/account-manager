@@ -55,7 +55,7 @@ public class RelationsTest {
                 .username("Test").password("password").name("name").build();
 
         final HttpEntity<UserForm> userEntity = new HttpEntity<>(userForm);
-        final ResponseEntity<String> regResponse = restTemplate.exchange("/api/auth/registration", HttpMethod.POST, userEntity, String.class);
+        final ResponseEntity<String> regResponse = restTemplate.exchange("/auth/registration", HttpMethod.POST, userEntity, String.class);
         Assert.assertEquals("User registration fail", 200, regResponse.getStatusCodeValue());
 
         final ResponseEntity<String> authResponse = restTemplate.exchange("/login", HttpMethod.POST, userEntity, String.class);
@@ -67,12 +67,12 @@ public class RelationsTest {
         tokenHeader.add("Authorization", token);
 
         final HttpEntity<AccountForm> accountEntity = new HttpEntity<>(AccountForm.builder().name("Test").description("Test").build(), tokenHeader);
-        final ResponseEntity<AccountDto> account1Response = restTemplate.exchange("/api/accounts/", HttpMethod.POST, accountEntity, AccountDto.class);
+        final ResponseEntity<AccountDto> account1Response = restTemplate.exchange("/accounts/", HttpMethod.POST, accountEntity, AccountDto.class);
         Assert.assertEquals("Account registration fail", 200, account1Response.getStatusCodeValue());
         Assert.assertNotNull("Account body not found", account1Response.getBody());
 
         final HttpEntity<AccountForm> account2Entity = new HttpEntity<>(AccountForm.builder().name("Test2").description("Test2").build(), tokenHeader);
-        final ResponseEntity<AccountDto> account2Response = restTemplate.exchange("/api/accounts/", HttpMethod.POST, account2Entity, AccountDto.class);
+        final ResponseEntity<AccountDto> account2Response = restTemplate.exchange("/accounts/", HttpMethod.POST, account2Entity, AccountDto.class);
         Assert.assertEquals("Account2 registration fail", 200, account2Response.getStatusCodeValue());
         Assert.assertNotNull("Account2 body not found", account2Response.getBody());
 
@@ -87,7 +87,7 @@ public class RelationsTest {
         @Test
     public void accounts() {
 
-            final ResponseEntity<AccountDto[]> account3Response = restTemplate.exchange("/api/accounts/", HttpMethod.GET
+            final ResponseEntity<AccountDto[]> account3Response = restTemplate.exchange("/accounts/", HttpMethod.GET
                     , new HttpEntity<>(tokenHeader), AccountDto[].class );
             Assert.assertEquals("Accounts get fail", 200, account3Response.getStatusCodeValue());
             Assert.assertNotNull("Accounts get body not found", account3Response.getBody());
@@ -101,7 +101,7 @@ public class RelationsTest {
 
             final HttpEntity<CategoryForm> categoryEntity = new HttpEntity<>(CategoryForm.builder().accountId(account1Id).name("Test")
                     .transactionType(TransactionType.DEPOSIT).build(), tokenHeader);
-            final ResponseEntity<CategoryDto> category1Response = restTemplate.exchange("/api/categories/", HttpMethod.POST, categoryEntity, CategoryDto.class);
+            final ResponseEntity<CategoryDto> category1Response = restTemplate.exchange("/categories/", HttpMethod.POST, categoryEntity, CategoryDto.class);
             Assert.assertEquals("Category registration fail", 200, category1Response.getStatusCodeValue());
             Assert.assertNotNull("Category body not found", category1Response.getBody());
             Assert.assertNotNull("AccountId in category body not found", category1Response.getBody().getAccountId());

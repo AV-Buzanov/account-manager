@@ -14,6 +14,7 @@ import test.buzanov.accountmanager.entity.Account;
 import test.buzanov.accountmanager.entity.User;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,4 +33,6 @@ public interface AccountRepository extends JpaRepository<Account, String> {
     Page<Account> findAllByUsers(Pageable pageable, User user);
 
     Optional<Account> findAccountByIdAndUsers(String accountId, User user);
+
+    Optional<List<Account>> findAllByUsersContainsAndUpdateIsAfter(User user, Date date);
 }

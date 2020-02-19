@@ -24,6 +24,9 @@ public class AccountDto {
     @Nullable
     private Date creation;
 
+    @Nullable
+    private Date update;
+
     private String name;
 
     private String description;

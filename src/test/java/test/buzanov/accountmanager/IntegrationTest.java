@@ -61,7 +61,7 @@ public class IntegrationTest {
         final HttpEntity<UserForm> userEntity = new HttpEntity<>(userForm);
 
 
-        final ResponseEntity<String> regResponse = restTemplate.exchange("/api/auth/registration", HttpMethod.POST, userEntity, String.class);
+        final ResponseEntity<String> regResponse = restTemplate.exchange("/auth/registration", HttpMethod.POST, userEntity, String.class);
         Assert.assertEquals("User registration fail", 200, regResponse.getStatusCodeValue());
 
         final ResponseEntity<String> authResponse = restTemplate.exchange("/login", HttpMethod.POST, userEntity, String.class);
@@ -79,7 +79,7 @@ public class IntegrationTest {
         final HttpEntity<AccountForm> accountEntity = new HttpEntity<>(accountForm, tokenHeader);
 
 
-        final ResponseEntity<AccountDto> accResponse = restTemplate.exchange("/api/accounts/", HttpMethod.POST, accountEntity, AccountDto.class);
+        final ResponseEntity<AccountDto> accResponse = restTemplate.exchange("/accounts/", HttpMethod.POST, accountEntity, AccountDto.class);
         Assert.assertEquals("Account registration fail", 200, accResponse.getStatusCodeValue());
         Assert.assertNotNull("Account not found", accResponse.getBody());
 
@@ -90,7 +90,7 @@ public class IntegrationTest {
         categoryForm.setAccountId(accountId);
         categoryForm.setTransactionType(TransactionType.DEPOSIT);
         final HttpEntity<CategoryForm> categoryEntity = new HttpEntity<>(categoryForm, tokenHeader);
-        final ResponseEntity<CategoryDto> categoryResponse = restTemplate.exchange("/api/categories/", HttpMethod.POST, categoryEntity, CategoryDto.class);
+        final ResponseEntity<CategoryDto> categoryResponse = restTemplate.exchange("/categories/", HttpMethod.POST, categoryEntity, CategoryDto.class);
         Assert.assertEquals("Category registration fail", 200, categoryResponse.getStatusCodeValue());
         Assert.assertNotNull("Category not found", categoryResponse.getBody());
         categoryId = categoryResponse.getBody().getId();
@@ -110,7 +110,7 @@ public class IntegrationTest {
             transactionForm.setCategoryId(categoryId);
             transactionForm.setSum(BigDecimal.valueOf(200));
             final HttpEntity<TransactionForm> transactionEntity = new HttpEntity<>(transactionForm, tokenHeader);
-            final ResponseEntity<TransactionDto> transResponse = restTemplate.exchange("/api/transactions/", HttpMethod.POST, transactionEntity, TransactionDto.class);
+            final ResponseEntity<TransactionDto> transResponse = restTemplate.exchange("/transactions/", HttpMethod.POST, transactionEntity, TransactionDto.class);
             Assert.assertEquals("Transaction registration fail", 200, transResponse.getStatusCodeValue());
 
     }
@@ -123,13 +123,13 @@ public class IntegrationTest {
         transactionForm.setCategoryId(categoryId);
         transactionForm.setSum(BigDecimal.valueOf(200));
         final HttpEntity<TransactionForm> transactionEntity = new HttpEntity<>(transactionForm, tokenHeader);
-        final ResponseEntity<TransactionDto> transResponse = restTemplate.exchange("/api/transactions/", HttpMethod.POST, transactionEntity, TransactionDto.class);
+        final ResponseEntity<TransactionDto> transResponse = restTemplate.exchange("/transactions/", HttpMethod.POST, transactionEntity, TransactionDto.class);
         Assert.assertEquals("Transaction registration fail", 200, transResponse.getStatusCodeValue());
 
-        final ResponseEntity<String> del = restTemplate.exchange("/api/accounts/"+accountId, HttpMethod.DELETE, transactionEntity, String.class);
+        final ResponseEntity<String> del = restTemplate.exchange("/accounts/"+accountId, HttpMethod.DELETE, transactionEntity, String.class);
         Assert.assertEquals("Acc del fail", 200, del.getStatusCodeValue());
 
-        final ResponseEntity<AccountDto> lol = restTemplate.exchange("/api/accounts/"+accountId, HttpMethod.GET, transactionEntity, AccountDto.class);
+        final ResponseEntity<AccountDto> lol = restTemplate.exchange("/accounts/"+accountId, HttpMethod.GET, transactionEntity, AccountDto.class);
         Assert.assertEquals("Acc del fail", 500, lol.getStatusCodeValue());
 
     }

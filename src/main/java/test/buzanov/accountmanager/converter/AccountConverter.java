@@ -8,6 +8,8 @@ import test.buzanov.accountmanager.entity.Account;
 import test.buzanov.accountmanager.entity.User;
 import test.buzanov.accountmanager.form.AccountForm;
 
+import java.util.Date;
+
 /**
  * Класс реализует перевод сущности Account в DTO объект и обратно.
  *
@@ -34,6 +36,7 @@ public class AccountConverter implements IAccountConverter {
         accountDto.setCreation(account.getCreation());
         accountDto.setName(account.getName());
         accountDto.setDescription(account.getDescription());
+        accountDto.setUpdate(account.getUpdate());
         for (User user : account.getUsers())
             accountDto.getUsers().add(user.getUsername());
         return accountDto;
@@ -43,6 +46,7 @@ public class AccountConverter implements IAccountConverter {
         if (account == null || accountForm == null) return null;
         account.setName(accountForm.getName());
         account.setDescription(accountForm.getDescription());
+        account.setUpdate(new Date(System.currentTimeMillis()));
         return account;
     }
 }

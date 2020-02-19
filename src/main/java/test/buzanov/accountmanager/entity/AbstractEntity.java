@@ -27,6 +27,8 @@ public abstract class AbstractEntity implements Serializable {
     @NotNull
     @Column(updatable = false)
     private Date creation = new Date(System.currentTimeMillis());
+    @NotNull
+    private Date update = new Date(System.currentTimeMillis());
 
     private static final long serialVersionUID = 1L;
 }

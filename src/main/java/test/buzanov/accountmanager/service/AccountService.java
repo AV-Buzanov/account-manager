@@ -14,7 +14,10 @@ import test.buzanov.accountmanager.repository.AccountRepository;
 import test.buzanov.accountmanager.repository.UserRepository;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -76,6 +79,17 @@ public class AccountService implements IAccountService {
                 .orElseThrow(() -> new EntityNotFoundException("Account not found."));
         final Account updatedAccount = accountConverter.updateEntity(accountForm, account);
         return accountConverter.toAccountDTO(accountRepository.saveAndFlush(updatedAccount));
+    }
+
+    @Nullable
+    @Transactional
+    public List<AccountDto> update(@Nullable final User user, final Date date) {
+        if (user == null || date == null)
+            throw new NullPointerException("Argument can't be empty or null");
+        return accountRepository.findAllByUsersContainsAndUpdateIsAfter(user, date)
+                .orElse(new ArrayList<>()).stream()
+                .map(accountConverter::toAccountDTO)
+                .collect(Collectors.toList());
     }
 
     @Transactional

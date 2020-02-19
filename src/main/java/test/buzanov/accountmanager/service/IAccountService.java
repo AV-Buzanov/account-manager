@@ -7,6 +7,8 @@ import test.buzanov.accountmanager.entity.User;
 import test.buzanov.accountmanager.form.AccountForm;
 
 import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Интерфейс сервиса для сущности Transaction.
@@ -25,4 +27,6 @@ public interface IAccountService {
     void delete(String id) ;
 
     boolean addUser(@Nullable final String id, final String username, final User user);
+
+    List<AccountDto> update(@Nullable final User user, final Date date);
 }

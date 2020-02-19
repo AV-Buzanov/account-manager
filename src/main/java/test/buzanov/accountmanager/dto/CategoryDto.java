@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import test.buzanov.accountmanager.enumurated.TransactionType;
 
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -36,4 +37,10 @@ public class CategoryDto {
 
     @NotNull
     private TransactionType transactionType;
+
+    @Nullable
+    private Date creation;
+
+    @Nullable
+    private Date update;
 }

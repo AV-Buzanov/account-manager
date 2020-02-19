@@ -6,6 +6,8 @@ import test.buzanov.accountmanager.entity.User;
 import test.buzanov.accountmanager.form.CategoryForm;
 
 import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Интерфейс сервиса для сущности Category.
@@ -27,4 +29,6 @@ public interface ICategoryService {
     CategoryDto update(@Nullable final CategoryForm accountDto, String id) throws Exception;
 
     void delete(String id) throws Exception;
+
+    List<CategoryDto> update(@Nullable final User user, final Date date);
 }

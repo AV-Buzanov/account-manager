@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import test.buzanov.accountmanager.dto.AccountDto;
 import test.buzanov.accountmanager.dto.CategoryDto;
 import test.buzanov.accountmanager.converter.ICategoryConverter;
 import test.buzanov.accountmanager.entity.Account;
@@ -14,7 +15,10 @@ import test.buzanov.accountmanager.form.CategoryForm;
 import test.buzanov.accountmanager.repository.AccountRepository;
 import test.buzanov.accountmanager.repository.CategoryRepository;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -96,6 +100,15 @@ public class CategoryService implements ICategoryService {
         if (categoryForm.getParentId() != null)
             convertedCategoryForUpdate.setParent(categoryRepository.findById(categoryForm.getParentId()).orElse(null));
         return categoryDtoConverter.toCategoryDTO(categoryRepository.saveAndFlush(convertedCategoryForUpdate));
+    }
+
+    public List<CategoryDto> update(@Nullable final User user, final Date date) {
+        if (user == null || date == null)
+            throw new NullPointerException("Argument can't be empty or null");
+        return categoryRepository.findAllByAccountUsersAndUpdateIsAfter(user, date)
+                .orElse(new ArrayList<>()).stream()
+                .map(categoryDtoConverter::toCategoryDTO)
+                .collect(Collectors.toList());
     }
 
     @Transactional

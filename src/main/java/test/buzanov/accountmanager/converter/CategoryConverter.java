@@ -37,6 +37,8 @@ public class CategoryConverter implements ICategoryConverter {
         if (category.getAccount() != null)
             categoryDto.setAccountId(category.getAccount().getId());
         categoryDto.setTransactionType(category.getTransactionType());
+        categoryDto.setUpdate(category.getUpdate());
+        categoryDto.setCreation(category.getCreation());
         return categoryDto;
     }
 }

@@ -12,7 +12,10 @@ import test.buzanov.accountmanager.entity.User;
 import test.buzanov.accountmanager.form.AccountForm;
 import test.buzanov.accountmanager.service.IAccountService;
 
+import java.time.Instant;
 import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Класс публикует REST сервис для управления сущностью Account.
@@ -30,21 +33,26 @@ public class AccountRestController {
         this.accountService = accountService;
     }
 
-
     @GetMapping("/")
-    public ResponseEntity<Collection<AccountDto>> findAll(@RequestParam(value = "page", defaultValue = "0") final int page,
-                                                          @RequestParam(value = "size", defaultValue = "100") final int size,
+    public ResponseEntity<Collection<AccountDto>> findAll(@RequestHeader(value = "page", defaultValue = "0") final int page,
+                                                          @RequestHeader(value = "size", defaultValue = "100") final int size,
                                                           @ApiIgnore @AuthenticationPrincipal final User user) {
         return ResponseEntity.ok(accountService.findAll(page, size, user));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AccountDto> findOne(@PathVariable final String id,
+    public ResponseEntity<AccountDto> findOne(@PathVariable(required = false) final String id,
                                               @ApiIgnore @AuthenticationPrincipal final User user) {
         final AccountDto accountDto = accountService.findOne(id, user);
         if (accountDto == null)
             return ResponseEntity.noContent().build();
         return ResponseEntity.ok(accountDto);
+    }
+
+    @GetMapping("/update/{timestamp}")
+    public ResponseEntity<List<AccountDto>> update(@PathVariable("timestamp") final Long timestamp,
+                                                    @ApiIgnore @AuthenticationPrincipal final User user) {
+        return ResponseEntity.ok(accountService.update(user, new Date(timestamp)));
     }
 
     @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
